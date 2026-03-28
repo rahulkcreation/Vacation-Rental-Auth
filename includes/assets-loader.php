@@ -140,6 +140,10 @@ class AuthMe_Assets_Loader {
             ),
 
             /* ── Admin Files ─────────────────── */
+            'admin_global_css' => array(
+                'dir' => $base_dir . 'admin/assets/admin-global.css',
+                'url' => $base_url . 'admin/assets/admin-global.css',
+            ),
             'admin_css'     => array(
                 'dir' => $base_dir . 'admin/assets/admin.css',
                 'url' => $base_url . 'admin/assets/admin.css',

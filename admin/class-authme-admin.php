@@ -64,14 +64,24 @@ class AuthMe_Admin {
             return;
         }
 
+        $global_css_file = AUTHME_PLUGIN_DIR . 'admin/assets/admin-global.css';
         $css_file = AUTHME_PLUGIN_DIR . 'admin/assets/admin.css';
         $js_file  = AUTHME_PLUGIN_DIR . 'admin/assets/admin.js';
+
+        if ( file_exists( $global_css_file ) ) {
+            wp_enqueue_style(
+                'authme-admin-global-css',
+                AUTHME_PLUGIN_URL . 'admin/assets/admin-global.css',
+                array(),
+                filemtime( $global_css_file )
+            );
+        }
 
         if ( file_exists( $css_file ) ) {
             wp_enqueue_style(
                 'authme-admin-css',
                 AUTHME_PLUGIN_URL . 'admin/assets/admin.css',
-                array(),
+                array( 'authme-admin-global-css' ),
                 filemtime( $css_file )
             );
         }
