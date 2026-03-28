@@ -4,7 +4,7 @@
  * Plugin Name: AuthMe
  * Plugin URI: https://arttechfuzion.com
  * Description: A comprehensive WordPress authentication plugin with OTP verification for secure registration and login.
- * Version: 1.5.0
+ * Version: 1.6.0
  * Author: Art-Tech Fuzion
  * Author URI: https://arttechfuzion.com
  * Text Domain: authme
@@ -20,10 +20,15 @@ if (! defined('ABSPATH')) {
 /* ──────────────────────────────────────────────
  * Constants
  * ────────────────────────────────────────────── */
-define('AUTHME_VERSION', '1.5.0');
+define('AUTHME_VERSION', '1.6.0');
 define('AUTHME_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('AUTHME_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('AUTHME_PLUGIN_BASENAME', plugin_basename(__FILE__));
+
+/* ──────────────────────────────────────────────
+ * Composer Autoload (libphonenumber-for-php)
+ * ────────────────────────────────────────────── */
+require_once AUTHME_PLUGIN_DIR . 'vendor/autoload.php';
 
 /* ──────────────────────────────────────────────
  * Include Files
@@ -46,13 +51,9 @@ register_activation_hook(__FILE__, 'authme_activate_plugin');
 
 function authme_activate_plugin()
 {
-    // Create database tables
-    $db = new AuthMe_DB();
-    $db->create_tables();
-
-    // Register the 'customer' role if it doesn't exist
-    if (! get_role('customer')) {
-        add_role('customer', 'Customer', array(
+    // Register the 'traveller' role if it doesn't exist
+    if (! get_role('traveller')) {
+        add_role('traveller', 'Traveller', array(
             'read' => true,
         ));
     }

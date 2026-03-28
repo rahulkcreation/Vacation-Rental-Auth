@@ -89,6 +89,10 @@ class AuthMe_Assets_Loader {
                 'dir' => $base_dir . 'assets/js/login.js',
                 'url' => $base_url . 'assets/js/login.js',
             ),
+            'js_country_phone_regex' => array(
+                'dir' => $base_dir . 'assets/js/country-phone-regex.js',
+                'url' => $base_url . 'assets/js/country-phone-regex.js',
+            ),
             'js_register'   => array(
                 'dir' => $base_dir . 'assets/js/register.js',
                 'url' => $base_url . 'assets/js/register.js',
@@ -241,7 +245,8 @@ class AuthMe_Assets_Loader {
             'toaster'  => array( 'authme-global' ),
             'overlay'  => array( 'authme-global' ),
             'login'    => array( 'authme-global', 'authme-toaster', 'authme-overlay' ),
-            'register' => array( 'authme-global', 'authme-toaster', 'authme-overlay' ),
+            'country_phone_regex' => array( 'authme-global' ),
+            'register' => array( 'authme-global', 'authme-toaster', 'authme-overlay', 'authme-country_phone_regex' ),
             'otp'             => array( 'authme-global', 'authme-toaster', 'authme-overlay' ),
             'forgot_password' => array( 'authme-global', 'authme-toaster', 'authme-overlay' ),
             'new_password'    => array( 'authme-global', 'authme-toaster', 'authme-overlay' ),

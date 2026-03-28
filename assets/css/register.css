@@ -13,14 +13,6 @@
     margin-bottom: 20px;
 }
 
-#authme-register-screen .authme-input-group label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--authme-text-main);
-}
-
 #authme-register-screen .authme-input {
     width: 100%;
     padding: 14px 16px;
@@ -106,6 +98,46 @@
 
 #authme-register-screen .authme-toggle-password:hover {
     color: var(--authme-primary);
+}
+
+/* ── Mobile Number Wrapper ────────────────── */
+#authme-register-screen .authme-mobile-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+
+#authme-register-screen .authme-country-select {
+    width: 160px;
+    min-width: 160px;
+    padding: 14px 8px;
+    border: 1.5px solid var(--authme-border);
+    border-radius: var(--authme-radius-md);
+    font-size: 14px;
+    color: var(--authme-text-main);
+    background-color: var(--authme-input-bg);
+    font-family: var(--authme-font);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    /* Prevent long option text from overflowing the select visually */
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    /* Use native appearance so dropdown opens reliably on all browsers */
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    appearance: auto;
+}
+
+#authme-register-screen .authme-country-select:focus {
+    outline: none;
+    border-color: var(--authme-primary);
+    box-shadow: 0 0 0 4px var(--authme-primary-ring);
+}
+
+#authme-register-screen .authme-mobile-input {
+    flex: 1;
+    min-width: 0;
 }
 
 /* ── Password Strength Indicator ─────────── */
@@ -199,4 +231,70 @@
 #authme-register-screen .authme-btn-primary:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* ── Responsive ──────────────────────────── */
+
+/* Tablets and smaller desktops */
+@media (max-width: 480px) {
+    #authme-register-screen .authme-input-group {
+        margin-bottom: 16px;
+    }
+
+    #authme-register-screen .authme-input {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    #authme-register-screen .authme-btn-primary {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    /* Stack the country select above the mobile input on small screens */
+    #authme-register-screen .authme-mobile-wrapper {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    #authme-register-screen .authme-country-select {
+        width: 100%;
+        min-width: unset;
+        font-size: 14px;
+        padding: 12px 10px;
+    }
+
+    #authme-register-screen .authme-mobile-input {
+        width: 100%;
+    }
+
+    #authme-register-screen .authme-remember-me {
+        margin-bottom: 18px;
+    }
+}
+
+/* Very small phones (≤ 360px) */
+@media (max-width: 360px) {
+    #authme-register-screen .authme-input {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    #authme-register-screen .authme-country-select {
+        font-size: 13px;
+        padding: 10px 8px;
+    }
+
+    #authme-register-screen .authme-btn-primary {
+        padding: 11px;
+        font-size: 13px;
+    }
+
+    #authme-register-screen .authme-field-msg {
+        font-size: 11px;
+    }
+
+    #authme-register-screen .authme-remember-me label {
+        font-size: 12.5px;
+    }
 }

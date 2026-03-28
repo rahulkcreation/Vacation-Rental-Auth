@@ -3,7 +3,7 @@
  * AuthMe Register Screen Template
  *
  * Rendered inside the overlay container.
- * Fields: Username, Email, Password (with eye toggle), Confirm Password, Remember Me.
+ * Fields: Username, Email, Mobile Number (with country code), Password, Confirm Password.
  *
  * @package AuthMe
  */
@@ -22,26 +22,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 
         <!-- Username Field -->
         <div class="authme-input-group">
-            <label for="authme-reg-username">Username</label>
             <input type="text" id="authme-reg-username" class="authme-input"
-                   placeholder="Enter your username" required>
+                   placeholder="Username" aria-label="Username" required>
             <span id="authme-reg-username-msg" class="authme-field-msg"></span>
         </div>
 
         <!-- Email Field -->
         <div class="authme-input-group">
-            <label for="authme-reg-email">Email Address</label>
             <input type="email" id="authme-reg-email" class="authme-input"
-                   placeholder="name@example.com" required>
+                   placeholder="Email Address" aria-label="Email Address" required>
             <span id="authme-reg-email-msg" class="authme-field-msg"></span>
+        </div>
+
+        <!-- Mobile Number Field -->
+        <div class="authme-input-group">
+            <div class="authme-mobile-wrapper">
+                <select id="authme-reg-country-code" class="authme-country-select" aria-label="Country Code">
+                    <option value="" disabled selected>🌐 Code</option>
+                </select>
+                <input type="tel" id="authme-reg-mobile" class="authme-input authme-mobile-input"
+                       placeholder="Mobile Number" aria-label="Mobile Number" required>
+            </div>
+            <span id="authme-reg-mobile-msg" class="authme-field-msg"></span>
         </div>
 
         <!-- Password Field -->
         <div class="authme-input-group">
-            <label for="authme-reg-password">Password</label>
             <div class="authme-password-wrapper">
                 <input type="password" id="authme-reg-password" class="authme-input"
-                       placeholder="Create a strong password" required>
+                       placeholder="Password" aria-label="Password" required>
                 <button type="button" class="authme-toggle-password" data-target="authme-reg-password" aria-label="Toggle password visibility">
                     <svg class="authme-eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                     <svg class="authme-eye-on" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -54,10 +63,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
         <!-- Confirm Password Field -->
         <div class="authme-input-group">
-            <label for="authme-reg-confirm-password">Confirm Password</label>
             <div class="authme-password-wrapper">
                 <input type="password" id="authme-reg-confirm-password" class="authme-input"
-                       placeholder="Repeat password" required>
+                       placeholder="Confirm Password" aria-label="Confirm Password" required>
                 <button type="button" class="authme-toggle-password" data-target="authme-reg-confirm-password" aria-label="Toggle password visibility">
                     <svg class="authme-eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                     <svg class="authme-eye-on" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>

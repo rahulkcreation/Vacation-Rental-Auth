@@ -12,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+use libphonenumber\PhoneNumberUtil;
+use libphonenumber\NumberParseException;
+
 class AuthMe_Auth {
 
     /* ──────────────────────────────────────────────────
@@ -121,6 +124,11 @@ class AuthMe_Auth {
             wp_send_json_error( array( 'message' => 'No account found. Please check your credentials.' ) );
         }
 
+        // Restrict administrator login
+        if ( in_array( 'administrator', (array) $user->roles ) ) {
+            wp_send_json_error( array( 'message' => 'Administrator accounts cannot log in here.' ) );
+        }
+
         // Verify password
         if ( ! wp_check_password( $password, $user->user_pass, $user->ID ) ) {
             wp_send_json_error( array( 'message' => 'Incorrect password. Please try again.' ) );
@@ -168,6 +176,21 @@ class AuthMe_Auth {
         $username = sanitize_user( $user_data['username'] );
         $email    = sanitize_email( $user_data['email'] );
         $password = $user_data['password'];
+        $mobile_number = isset( $user_data['mobile_number'] ) ? sanitize_text_field( $user_data['mobile_number'] ) : '';
+        $mobile_region = isset( $user_data['mobile_region'] ) ? sanitize_text_field( $user_data['mobile_region'] ) : '';
+
+        // Server-side mobile number validation using libphonenumber-for-php
+        if ( ! empty( $mobile_number ) && ! empty( $mobile_region ) ) {
+            $phoneUtil = PhoneNumberUtil::getInstance();
+            try {
+                $number = $phoneUtil->parse( $mobile_number, $mobile_region );
+                if ( ! $phoneUtil->isValidNumber( $number ) ) {
+                    wp_send_json_error( array( 'message' => 'Invalid mobile number for the selected country.' ) );
+                }
+            } catch ( NumberParseException $e ) {
+                wp_send_json_error( array( 'message' => 'Invalid mobile number format.' ) );
+            }
+        }
 
         // Double-check uniqueness
         if ( username_exists( $username ) ) {
@@ -183,11 +206,16 @@ class AuthMe_Auth {
             'user_nicename' => sanitize_title( $username ),
             'user_email'    => $email,
             'user_pass'     => $password,
-            'role'          => 'customer',
+            'role'          => 'traveller',
         ) );
 
         if ( is_wp_error( $user_id ) ) {
             wp_send_json_error( array( 'message' => $user_id->get_error_message() ) );
+        }
+
+        // Save mobile number to user meta
+        if ( ! empty( $mobile_number ) ) {
+            update_user_meta( $user_id, 'mobile_number', $mobile_number );
         }
 
         // Auto-login the newly registered user

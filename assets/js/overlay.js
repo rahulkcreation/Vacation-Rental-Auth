@@ -136,6 +136,12 @@
       if (btn.id === "authme-otp-submit-btn") return; // OTP verify is always enabled
       btn.disabled = true;
     });
+
+    // Reset the registration form's internal validation state
+    // and restore the country select to its default (India +91)
+    if (typeof window.authmeResetRegState === "function") {
+      window.authmeResetRegState();
+    }
   }
 
   /* ── Event Listeners ─────────────────── */
