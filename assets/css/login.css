@@ -41,7 +41,7 @@
 }
 
 #authme-login-screen .authme-input.authme-input-success:focus {
-    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12);
+    box-shadow: 0 0 0 4px var(--authme-success-ring);
 }
 
 #authme-login-screen .authme-input.authme-input-error {
@@ -49,7 +49,7 @@
 }
 
 #authme-login-screen .authme-input.authme-input-error:focus {
-    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
+    box-shadow: 0 0 0 4px var(--authme-error-ring);
 }
 
 /* ── Field Messages ──────────────────────── */
@@ -128,7 +128,7 @@
     width: 100%;
     padding: 14px;
     background-color: var(--authme-primary);
-    color: #ffffff;
+    color: var(--authme-white);
     border: none;
     border-radius: var(--authme-radius-md);
     font-size: 15px;
@@ -142,7 +142,7 @@
 #authme-login-screen .authme-btn-primary:hover:not(:disabled) {
     background-color: var(--authme-primary-hover);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 4px 12px var(--authme-primary-shadow);
 }
 
 #authme-login-screen .authme-btn-primary:active:not(:disabled) {

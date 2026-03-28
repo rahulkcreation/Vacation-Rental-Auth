@@ -34,9 +34,9 @@ class AuthMe_Auth {
             wp_send_json_error( array( 'message' => 'Username must start with an alphabet character.' ) );
         }
 
-        // Length: 3–20 characters, alphanumeric only
-        if ( ! preg_match( '/^[a-zA-Z][a-zA-Z0-9]{2,19}$/', $username ) ) {
-            wp_send_json_error( array( 'message' => 'Username must be 3–20 alphanumeric characters.' ) );
+        // Length: 4–14 characters, alphanumeric only
+        if ( ! preg_match( '/^[a-zA-Z][a-zA-Z0-9]{3,13}$/', $username ) ) {
+            wp_send_json_error( array( 'message' => 'Username must be 4–14 alphanumeric characters.' ) );
         }
 
         // Check uniqueness
@@ -217,6 +217,12 @@ class AuthMe_Auth {
         if ( ! empty( $mobile_number ) ) {
             update_user_meta( $user_id, 'mobile_number', $mobile_number );
         }
+
+        // Set verification flags in usermeta
+        // Email is verified because registration requires OTP verification on the email
+        update_user_meta( $user_id, 'is_email_verified', 1 );
+        // Mobile number is NOT verified yet (no OTP sent to phone)
+        update_user_meta( $user_id, 'is_number_verified', 0 );
 
         // Auto-login the newly registered user
         wp_set_current_user( $user_id );

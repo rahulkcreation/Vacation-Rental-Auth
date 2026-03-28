@@ -21,16 +21,22 @@
     --authme-primary: #2563eb;
     --authme-primary-hover: #1d4ed8;
     --authme-primary-ring: rgba(37, 99, 235, 0.15);
+    --authme-primary-shadow: rgba(37, 99, 235, 0.2);
 
     /* Status colors */
     --authme-success: #16a34a;
     --authme-success-bg: #f0fdf4;
+    --authme-success-ring: rgba(22, 163, 74, 0.12);
     --authme-error: #dc2626;
     --authme-error-bg: #fef2f2;
+    --authme-error-ring: rgba(220, 38, 38, 0.12);
     --authme-warning: #f59e0b;
     --authme-warning-bg: #fffbeb;
     --authme-info: #2563eb;
     --authme-info-bg: #eff6ff;
+
+    /* Password strength specific */
+    --authme-strength-good: #3b82f6;
 
     /* Text */
     --authme-text-main: #0f172a;
@@ -41,6 +47,10 @@
     --authme-bg: #f8fafc;
     --authme-card-bg: #ffffff;
     --authme-input-bg: #ffffff;
+    --authme-white: #ffffff;
+
+    /* Backdrop overlay */
+    --authme-backdrop: rgba(15, 23, 42, 0.55);
 
     /* Borders */
     --authme-border: #e2e8f0;
@@ -54,6 +64,7 @@
     --authme-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
     --authme-shadow-md: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
     --authme-shadow-lg: 0 20px 60px -15px rgba(0, 0, 0, 0.12);
+    --authme-toast-shadow: 0 8px 30px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04);
 
     /* Font */
     --authme-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
