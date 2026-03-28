@@ -366,7 +366,7 @@
             function(res) {
                 sendOtpBtn.textContent = tempBtnText;
                 sendOtpBtn.disabled = false;
-                if (window.authmeToaster) window.authmeToaster.success(res.message);
+                if (typeof window.authmeToast === 'function') window.authmeToast('success', res.message);
                 
                 goToStep(3);
                 startOtpTimer(res.expiry || 60);
@@ -378,7 +378,7 @@
             function(err) {
                 sendOtpBtn.textContent = tempBtnText;
                 sendOtpBtn.disabled = false;
-                if (window.authmeToaster) window.authmeToaster.error(err.message);
+                if (typeof window.authmeToast === 'function') window.authmeToast('error', err.message);
             }
         );
     }
@@ -457,7 +457,7 @@
 
         window.authmeAjax('authme_send_otp', data,
             function (res) {
-                if (window.authmeToaster) window.authmeToaster.success('OTP resent successfully.');
+                if (typeof window.authmeToast === 'function') window.authmeToast('success', 'OTP resent successfully.');
                 
                 // Clear boxes
                 var boxes = document.querySelectorAll('.authme-host-otp-box');
@@ -469,7 +469,7 @@
             function (err) {
                 resendBtn.classList.remove('authme-host-link-disabled');
                 resendBtn.textContent = 'Resend OTP';
-                if (window.authmeToaster) window.authmeToaster.error(err.message || 'Failed to resend OTP.');
+                if (typeof window.authmeToast === 'function') window.authmeToast('error', err.message || 'Failed to resend OTP.');
             }
         );
     }
@@ -480,7 +480,7 @@
         boxes.forEach(function(b) { code += b.value; });
 
         if (code.length < 6) {
-            if (window.authmeToaster) window.authmeToaster.error('Please enter the 6-digit code.');
+            if (typeof window.authmeToast === 'function') window.authmeToast('error', 'Please enter the 6-digit code.');
             return;
         }
 
@@ -501,7 +501,7 @@
             function (err) {
                 otpVerifyBtn.style.display = 'block';
                 loader.style.display = 'none';
-                if (window.authmeToaster) window.authmeToaster.error(err.message);
+                if (typeof window.authmeToast === 'function') window.authmeToast('error', err.message || 'Invalid OTP code.');
                 boxes.forEach(function(b) { b.value = ''; b.classList.remove('authme-host-otp-filled'); });
                 boxes[0].focus();
             }
@@ -532,7 +532,7 @@
             function (err) {
                 otpVerifyBtn.style.display = 'block';
                 loader.style.display = 'none';
-                if (window.authmeToaster) window.authmeToaster.error(err.message || "Failed to submit request.");
+                if (typeof window.authmeToast === 'function') window.authmeToast('error', err.message || "Failed to submit request.");
             }
         );
     }

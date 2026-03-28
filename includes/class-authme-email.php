@@ -27,6 +27,8 @@ class AuthMe_Email {
             $subject = 'Your Login Verification Code — AuthMe';
         } elseif ( $purpose === 'password_reset' ) {
             $subject = 'Your Reset Password Verification Code — AuthMe';
+        } elseif ( $purpose === 'host_request' ) {
+            $subject = 'Host Application verification';
         } else {
             $subject = 'Your Registration Verification Code — AuthMe';
         }

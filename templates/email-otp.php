@@ -20,6 +20,8 @@ if ( $authme_otp_purpose === 'login' ) {
     $purpose_label = 'Login Verification';
 } elseif ( $authme_otp_purpose === 'password_reset' ) {
     $purpose_label = 'Reset Password Verification';
+} elseif ( $authme_otp_purpose === 'host_request' ) {
+    $purpose_label = 'Email verification';
 } else {
     $purpose_label = 'Registration Verification';
 }
