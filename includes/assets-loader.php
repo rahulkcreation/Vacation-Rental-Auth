@@ -63,6 +63,10 @@ class AuthMe_Assets_Loader {
                 'dir' => $base_dir . 'assets/css/new-password.css',
                 'url' => $base_url . 'assets/css/new-password.css',
             ),
+            'css_host_request' => array(
+                'dir' => $base_dir . 'assets/css/host-request.css',
+                'url' => $base_url . 'assets/css/host-request.css',
+            ),
             'css_otp'       => array(
                 'dir' => $base_dir . 'assets/css/otp.css',
                 'url' => $base_url . 'assets/css/otp.css',
@@ -105,6 +109,10 @@ class AuthMe_Assets_Loader {
                 'dir' => $base_dir . 'assets/js/new-password.js',
                 'url' => $base_url . 'assets/js/new-password.js',
             ),
+            'js_host_request' => array(
+                'dir' => $base_dir . 'assets/js/host-request.js',
+                'url' => $base_url . 'assets/js/host-request.js',
+            ),
             'js_otp'        => array(
                 'dir' => $base_dir . 'assets/js/otp.js',
                 'url' => $base_url . 'assets/js/otp.js',
@@ -131,6 +139,9 @@ class AuthMe_Assets_Loader {
             ),
             'tpl_new_password'    => array(
                 'dir' => $base_dir . 'templates/new-password.php',
+            ),
+            'tpl_host_request'    => array(
+                'dir' => $base_dir . 'templates/host-request.php',
             ),
             'tpl_email_password_changed' => array(
                 'dir' => $base_dir . 'templates/email-password-changed.php',
@@ -168,6 +179,9 @@ class AuthMe_Assets_Loader {
             ),
             'inc_otp'       => array(
                 'dir' => $base_dir . 'includes/class-authme-otp.php',
+            ),
+            'inc_host_request' => array(
+                'dir' => $base_dir . 'includes/class-authme-host-request.php',
             ),
             'inc_email'     => array(
                 'dir' => $base_dir . 'includes/class-authme-email.php',
@@ -226,7 +240,7 @@ class AuthMe_Assets_Loader {
     public static function enqueue_frontend() {
 
         /* ── CSS Files ───────────────────── */
-        $css_files = array( 'global', 'overlay', 'login', 'register', 'otp', 'toaster', 'forgot_password', 'new_password' );
+        $css_files = array( 'global', 'overlay', 'login', 'register', 'otp', 'toaster', 'forgot_password', 'new_password', 'host_request' );
 
         foreach ( $css_files as $name ) {
             $key = 'css_' . $name;
@@ -254,6 +268,7 @@ class AuthMe_Assets_Loader {
             'otp'             => array( 'authme-global', 'authme-toaster', 'authme-overlay' ),
             'forgot_password' => array( 'authme-global', 'authme-toaster', 'authme-overlay' ),
             'new_password'    => array( 'authme-global', 'authme-toaster', 'authme-overlay' ),
+            'host_request'    => array( 'authme-global', 'authme-toaster', 'authme-country_phone_regex' ),
         );
 
         foreach ( $js_files as $name => $deps ) {

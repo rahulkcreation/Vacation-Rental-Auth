@@ -79,6 +79,18 @@ if ( ! defined( 'ABSPATH' ) ) {
             <code class="authme-admin-code">authmeOpenOverlay();</code>
         </div>
 
+        <div class="authme-admin-info-box" style="margin-bottom:16px;">
+            <p><strong>4. Become a Host — Direct URL</strong></p>
+            <p style="font-size:13px; color:#64748b; margin-top:4px;">Share this link anywhere to automatically load and open the "Become a Host" multi-step application modal.</p>
+            <code class="authme-admin-code"><?php echo esc_url( home_url( '/?become-host' ) ); ?></code>
+        </div>
+
+        <div class="authme-admin-info-box" style="margin-bottom:16px;">
+            <p><strong>5. Become a Host — JavaScript</strong></p>
+            <p style="font-size:13px; color:#64748b; margin-top:4px;">Call this function from any <code>onclick</code> handler or custom JS to open the host request modal programmatically.</p>
+            <code class="authme-admin-code">authmeOpenHostModal();</code>
+        </div>
+
         <div class="authme-admin-info-box">
             <p><strong>⚠️ Important</strong></p>
             <p style="font-size:13px; color:#ef4444; margin-top:4px;">After activating the plugin, go to <strong>Settings → Permalinks</strong> and click <strong>Save Changes</strong> to flush rewrite rules. This is required for the <code>/authme</code> URL to work.</p>

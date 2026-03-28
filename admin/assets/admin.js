@@ -56,20 +56,41 @@
         html += '<tbody>';
 
         html += '<tr>';
-        html += '<td><strong>wp_authme_otp_storage</strong> (Table)</td>';
-        html += '<td class="' + (data.table_exists ? 'authme-status-ok' : 'authme-status-missing') + '">';
-        html += data.table_exists ? '✅ Exists' : '❌ Missing';
+        html += '<td><strong>' + (data.otp_table ? data.otp_table.name : 'wp_authme_otp_storage') + '</strong> (Table)</td>';
+        html += '<td class="' + (data.otp_table && data.otp_table.exists ? 'authme-status-ok' : 'authme-status-missing') + '">';
+        html += (data.otp_table && data.otp_table.exists) ? '✅ Exists' : '❌ Missing';
         html += '</td></tr>';
 
-        // Column rows
-        if (data.table_exists && data.columns) {
-            var columns = data.columns;
+        // OTP Column rows
+        if (data.otp_table && data.otp_table.exists && data.otp_table.columns) {
+            var columns = data.otp_table.columns;
             for (var col in columns) {
                 if (columns.hasOwnProperty(col)) {
                     html += '<tr>';
                     html += '<td>&nbsp;&nbsp;&nbsp;&nbsp;↳ <code>' + col + '</code></td>';
                     html += '<td class="' + (columns[col] ? 'authme-status-ok' : 'authme-status-missing') + '">';
                     html += columns[col] ? '✅ OK' : '❌ Missing';
+                    html += '</td></tr>';
+                }
+            }
+        }
+
+        // Host Table existence row
+        html += '<tr>';
+        html += '<td><strong>' + (data.host_table ? data.host_table.name : 'wp_host_request') + '</strong> (Table)</td>';
+        html += '<td class="' + (data.host_table && data.host_table.exists ? 'authme-status-ok' : 'authme-status-missing') + '">';
+        html += (data.host_table && data.host_table.exists) ? '✅ Exists' : '❌ Missing';
+        html += '</td></tr>';
+
+        // Host Column rows
+        if (data.host_table && data.host_table.exists && data.host_table.columns) {
+            var hostCols = data.host_table.columns;
+            for (var hcol in hostCols) {
+                if (hostCols.hasOwnProperty(hcol)) {
+                    html += '<tr>';
+                    html += '<td>&nbsp;&nbsp;&nbsp;&nbsp;↳ <code>' + hcol + '</code></td>';
+                    html += '<td class="' + (hostCols[hcol] ? 'authme-status-ok' : 'authme-status-missing') + '">';
+                    html += hostCols[hcol] ? '✅ OK' : '❌ Missing';
                     html += '</td></tr>';
                 }
             }

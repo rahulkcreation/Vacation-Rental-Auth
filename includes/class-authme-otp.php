@@ -54,7 +54,7 @@ class AuthMe_OTP {
             wp_send_json_error( array( 'message' => 'Email and purpose are required.' ) );
         }
 
-        if ( ! in_array( $purpose, array( 'registration', 'login', 'password_reset' ), true ) ) {
+        if ( ! in_array( $purpose, array( 'registration', 'login', 'password_reset', 'host_request' ), true ) ) {
             wp_send_json_error( array( 'message' => 'Invalid OTP purpose.' ) );
         }
 

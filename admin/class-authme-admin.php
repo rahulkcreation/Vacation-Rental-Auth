@@ -49,6 +49,16 @@ class AuthMe_Admin {
             'authme-database',                  // Menu slug
             array( $this, 'render_database' )   // Callback
         );
+
+        // Sub-menu: Host Requests
+        add_submenu_page(
+            'authme',                           // Parent slug
+            'Host Requests',                    // Page title
+            'Host Requests',                    // Menu title
+            'manage_options',                   // Capability
+            'authme-host-requests',             // Menu slug
+            array( $this, 'render_host_requests' ) // Callback
+        );
     }
 
     /* ──────────────────────────────────────── */
@@ -118,6 +128,13 @@ class AuthMe_Admin {
         include AUTHME_PLUGIN_DIR . 'admin/templates/database.php';
     }
 
+    /**
+     * Render the Host Requests page.
+     */
+    public function render_host_requests() {
+        include AUTHME_PLUGIN_DIR . 'admin/templates/host-requests.php';
+    }
+
     /* ──────────────────────────────────────── */
 
     /**
@@ -165,9 +182,9 @@ class AuthMe_Admin {
         $status_after = $db->check_table_status();
 
         if ( $status_after['all_good'] ) {
-            $msg = $status_before['table_exists']
-                ? 'Table updated successfully.'
-                : 'Table created successfully.';
+            $msg = ( $status_before['otp_table']['exists'] || $status_before['host_table']['exists'] )
+                ? 'Tables updated successfully.'
+                : 'Tables created successfully.';
 
             wp_send_json_success( array(
                 'message' => $msg,

@@ -15,11 +15,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 class AuthMe_DB {
 
     /**
-     * Full table name including WP prefix.
+     * OTP storage table name.
      *
      * @var string
      */
     private $table_name;
+
+    /**
+     * Host request table name.
+     *
+     * @var string
+     */
+    private $host_table_name;
 
     /**
      * Required columns in the OTP storage table.
@@ -36,6 +43,7 @@ class AuthMe_DB {
     public function __construct() {
         global $wpdb;
         $this->table_name = $wpdb->prefix . 'authme_otp_storage';
+        $this->host_table_name = $wpdb->prefix . 'host_request';
     }
 
     /* ──────────────────────────────────────── */
@@ -63,8 +71,17 @@ class AuthMe_DB {
             KEY email_purpose (email, purpose)
         ) $charset_collate;";
 
+        $sql_host = "CREATE TABLE {$this->host_table_name} (
+            id INT(11) NOT NULL AUTO_INCREMENT,
+            user_data LONGTEXT,
+            status VARCHAR(50) NOT NULL DEFAULT 'pending',
+            date DATETIME DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
+        dbDelta( $sql_host );
 
         return true;
     }
@@ -80,36 +97,43 @@ class AuthMe_DB {
         global $wpdb;
 
         $status = array(
-            'table_exists'    => false,
-            'columns'         => array(),
-            'missing_columns' => array(),
-            'all_good'        => false,
+            'otp_table'  => array('name' => $this->table_name, 'exists' => false, 'columns' => array()),
+            'host_table' => array('name' => $this->host_table_name, 'exists' => false, 'columns' => array()),
+            'all_good'   => false,
         );
 
-        // Check if the table exists
-        $table_exists = $wpdb->get_var(
-            $wpdb->prepare( "SHOW TABLES LIKE %s", $this->table_name )
-        );
+        // Check exists
+        $status['otp_table']['exists'] = ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $this->table_name)) === $this->table_name);
+        $status['host_table']['exists'] = ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $this->host_table_name)) === $this->host_table_name);
 
-        if ( $table_exists !== $this->table_name ) {
-            $status['missing_columns'] = $this->required_columns;
-            return $status;
-        }
+        $all_good = true;
 
-        $status['table_exists'] = true;
-
-        // Get existing columns
-        $existing_columns = $wpdb->get_col( "SHOW COLUMNS FROM {$this->table_name}", 0 );
-
-        foreach ( $this->required_columns as $col ) {
-            $exists = in_array( $col, $existing_columns, true );
-            $status['columns'][ $col ] = $exists;
-            if ( ! $exists ) {
-                $status['missing_columns'][] = $col;
+        // Check OTP Columns
+        if ($status['otp_table']['exists']) {
+            $existing_otp_cols = $wpdb->get_col("SHOW COLUMNS FROM {$this->table_name}", 0);
+            foreach ($this->required_columns as $col) {
+                $exists = in_array($col, $existing_otp_cols, true);
+                $status['otp_table']['columns'][$col] = $exists;
+                if (!$exists) $all_good = false;
             }
+        } else {
+            $all_good = false;
         }
 
-        $status['all_good'] = empty( $status['missing_columns'] );
+        // Check Host Columns
+        $host_required_cols = array('id', 'user_data', 'status', 'date');
+        if ($status['host_table']['exists']) {
+            $existing_host_cols = $wpdb->get_col("SHOW COLUMNS FROM {$this->host_table_name}", 0);
+            foreach ($host_required_cols as $col) {
+                $exists = in_array($col, $existing_host_cols, true);
+                $status['host_table']['columns'][$col] = $exists;
+                if (!$exists) $all_good = false;
+            }
+        } else {
+            $all_good = false;
+        }
+
+        $status['all_good'] = $all_good;
 
         return $status;
     }

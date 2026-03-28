@@ -38,6 +38,7 @@ require_once AUTHME_PLUGIN_DIR . 'includes/class-authme-db.php';
 require_once AUTHME_PLUGIN_DIR . 'includes/class-authme-email.php';
 require_once AUTHME_PLUGIN_DIR . 'includes/class-authme-otp.php';
 require_once AUTHME_PLUGIN_DIR . 'includes/class-authme-auth.php';
+require_once AUTHME_PLUGIN_DIR . 'includes/class-authme-host-request.php';
 
 // Admin files (only on admin pages)
 if (is_admin()) {
@@ -137,10 +138,27 @@ function authme_inject_overlay_in_footer()
 }
 
 /* ──────────────────────────────────────────────
+ * Auto-inject Host Request Modal via wp_footer
+ * ────────────────────────────────────────────── */
+add_action('wp_footer', 'authme_inject_host_request_modal');
+
+function authme_inject_host_request_modal()
+{
+    // The Host Request modal is available for both logged-in and guest users.
+    // It only gets injected and auto-opened if ?become-host is in the URL to save DOM size.
+    if (isset($_GET['become-host'])) {
+        include AUTHME_PLUGIN_DIR . 'templates/toaster.php'; // In case it's not already included
+        include AUTHME_PLUGIN_DIR . 'templates/host-request.php';
+        echo '<script>document.addEventListener("DOMContentLoaded",function(){if(typeof authmeOpenHostModal==="function"){authmeOpenHostModal();}});</script>';
+    }
+}
+
+/* ──────────────────────────────────────────────
  * Register AJAX Endpoints
  * ────────────────────────────────────────────── */
 $authme_auth = new AuthMe_Auth();
 $authme_otp  = new AuthMe_OTP();
+$authme_host = new AuthMe_Host_Request();
 
 // Public (nopriv) + logged-in AJAX actions
 $ajax_actions = array(
@@ -154,6 +172,10 @@ $ajax_actions = array(
     'authme_reset_password'    => array($authme_auth, 'ajax_reset_password'),
     'authme_send_otp'          => array($authme_otp, 'ajax_send_otp'),
     'authme_verify_otp'        => array($authme_otp, 'ajax_verify_otp'),
+    'authme_check_host_username'   => array($authme_host, 'ajax_check_host_username'),
+    'authme_check_host_email'      => array($authme_host, 'ajax_check_host_email'),
+    'authme_check_host_mobile'     => array($authme_host, 'ajax_check_host_mobile'),
+    'authme_submit_host_request'   => array($authme_host, 'ajax_submit_host_request'),
 );
 
 foreach ($ajax_actions as $action => $callback) {
