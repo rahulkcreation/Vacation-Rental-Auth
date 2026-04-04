@@ -78,26 +78,7 @@ function authme_activate_plugin()
     }
 }
 
-/* ──────────────────────────────────────────────
- * Fail-safe: Ensure Roles Exist (If plugin wasn't reactivated)
- * ────────────────────────────────────────────── */
-add_action('init', 'authme_ensure_roles_exist');
 
-function authme_ensure_roles_exist()
-{
-    if (! get_role('traveller')) {
-        add_role('traveller', 'Traveller', array(
-            'read' => true,
-        ));
-    }
-    
-    if (! get_role('host')) {
-        add_role('host', 'Host', array(
-            'read' => true,
-            'upload_files' => true,
-        ));
-    }
-}
 
 /* ──────────────────────────────────────────────
  * Plugin Deactivation
@@ -291,39 +272,4 @@ function authme_handle_universal_logout()
 }
 add_action('template_redirect', 'authme_handle_universal_logout');
 
-/* ──────────────────────────────────────────────
- * WooCommerce Integration
- *
- * Handles non-logged-in users on WooCommerce pages:
- *                 with ?authme_open=1 so the popup opens
- *                 on the homepage (no WooCommerce forms visible).
- *
- * Only runs if WooCommerce is active.
- * ────────────────────────────────────────────── */
-add_action('template_redirect', 'authme_woo_intercept_pages');
 
-function authme_woo_intercept_pages()
-{
-    // Only run if WooCommerce is active
-    if (! class_exists('WooCommerce')) {
-        return;
-    }
-
-    // Skip if user is already logged in
-    if (is_user_logged_in()) {
-        return;
-    }
-
-    // Checkout page → redirect back to cart (must log in first)
-    if (function_exists('is_checkout') && is_checkout()) {
-        $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url();
-        wp_safe_redirect($cart_url);
-        exit;
-    }
-
-    // My Account page → redirect to homepage with popup
-    if (function_exists('is_account_page') && is_account_page()) {
-        wp_safe_redirect(home_url('?authme_open=1'));
-        exit;
-    }
-}
