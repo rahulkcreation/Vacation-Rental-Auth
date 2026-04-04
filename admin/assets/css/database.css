@@ -1,0 +1,290 @@
+/* ============================================
+ * AuthMe Admin — Database Management Styles
+ * ============================================
+ *
+ * Scoped to #am-database using am-db-* class prefix.
+ * All colors use CSS variables from global.css.
+ * Zero hardcoded color codes.
+ *
+ * @package AuthMe
+ * ============================================ */
+
+/* ── Container ──────────────────────────── */
+#am-database {
+    max-width: 1000px;
+    margin: 20px 20px 20px 0;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+    color: var(--authme-text);
+    line-height: 1.5;
+}
+
+/* ── Title ──────────────────────────────── */
+#am-database .am-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--authme-secondary);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.25rem;
+}
+
+#am-database .am-subhead {
+    color: var(--authme-grey-light-text);
+    border-left: 3px solid var(--authme-primary);
+    padding-left: 1rem;
+    margin-top: 0.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+#am-database .am-heading {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--authme-secondary);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.75rem;
+}
+
+/* ── Card ───────────────────────────────── */
+#am-database .am-card {
+    background: var(--authme-white);
+    border-radius: 1.25rem;
+    box-shadow: var(--authme-card-shadow);
+    padding: 1.5rem;
+    border: 1px solid var(--authme-border-light);
+    margin-bottom: 1.5rem;
+}
+
+/* ── Text ───────────────────────────────── */
+#am-database .am-text {
+    color: var(--authme-text);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+}
+
+#am-database .am-text:last-child {
+    margin-bottom: 0;
+}
+
+#am-database .am-text-bold {
+    font-weight: 600;
+    color: var(--authme-secondary);
+}
+
+#am-database .am-text-secondary {
+    color: var(--authme-grey-light-text);
+    font-size: 0.8rem;
+}
+
+/* ── Status Table ───────────────────────── */
+#am-database .am-db-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+#am-database .am-db-table th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    color: var(--authme-secondary);
+    border-bottom: 2px solid var(--authme-border-light);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#am-database .am-db-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--authme-border-light);
+    vertical-align: middle;
+}
+
+#am-database .am-db-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Table name row - slightly bolder */
+#am-database .am-db-table-row {
+    font-weight: 600;
+    color: var(--authme-secondary);
+}
+
+/* Column name row - indented */
+#am-database .am-db-col-name {
+    padding-left: 2.5rem;
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: var(--authme-secondary);
+}
+
+#am-database .am-db-col-arrow {
+    color: var(--authme-grey-light-text);
+    margin-right: 0.4rem;
+}
+
+/* ── Status Badges ──────────────────────── */
+#am-database .am-db-status-ok {
+    color: var(--authme-success);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+#am-database .am-db-status-missing {
+    color: var(--authme-error);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* ── All Good Banner ────────────────────── */
+#am-database .am-db-banner-ok {
+    background: var(--authme-light-green-bg);
+    color: var(--authme-success);
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+#am-database .am-db-banner-warn {
+    background: var(--authme-light-red-bg);
+    color: var(--authme-error);
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+/* ── Loading Text ───────────────────────── */
+#am-database .am-db-loading {
+    color: var(--authme-grey-light-text);
+    font-size: 0.9rem;
+    padding: 1rem 0;
+}
+
+/* ── Action Buttons ─────────────────────── */
+#am-database .am-db-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+#am-database .am-db-btn-create {
+    background-color: var(--authme-primary);
+    color: var(--authme-white);
+    border: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#am-database .am-db-btn-create:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+#am-database .am-db-btn-create:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#am-database .am-db-btn-refresh {
+    background: var(--authme-white);
+    color: var(--authme-secondary);
+    border: 1px solid var(--authme-border-default);
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#am-database .am-db-btn-refresh:hover {
+    border-color: var(--authme-primary);
+    background: var(--authme-bg);
+}
+
+#am-database .am-db-btn-refresh:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── Toast ──────────────────────────────── */
+.am-db-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 0.6rem 1.2rem;
+    border-radius: 2rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    z-index: 100000;
+    animation: amDbFadeOut 4s forwards;
+}
+
+.am-db-toast-success {
+    background: var(--authme-success);
+    color: var(--authme-white);
+}
+
+.am-db-toast-error {
+    background: var(--authme-error);
+    color: var(--authme-white);
+}
+
+@keyframes amDbFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+/* ── Responsive ─────────────────────────── */
+@media (max-width: 600px) {
+    #am-database .am-title {
+        font-size: 1.5rem;
+    }
+
+    #am-database .am-card {
+        padding: 1rem;
+    }
+
+    #am-database .am-db-table th,
+    #am-database .am-db-table td {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    #am-database .am-db-col-name {
+        padding-left: 1.5rem;
+    }
+
+    #am-database .am-db-actions {
+        flex-direction: column;
+    }
+
+    #am-database .am-db-btn-create,
+    #am-database .am-db-btn-refresh {
+        width: 100%;
+        text-align: center;
+    }
+}

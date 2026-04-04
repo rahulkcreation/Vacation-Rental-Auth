@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Management</title>
+    <style>
+        :root {
+            /* Primary colors */
+            --am-d-primary: #F15E74;
+            --am-d-secondary: #2C3E50;
+            --am-d-accent: #2563eb;
+            --am-d-bg: #FAFAFA;
+            --am-d-text: #000000;
+
+            /* Status colors */
+            --am-d-success: #16a34a;
+            --am-d-warning: #f59e0b;
+            --am-d-error: #ea0124;
+
+            /* UI colors */
+            --am-d-white: #ffffff;
+            --am-d-card-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+            --am-d-border-light: #e9eef3;
+            --am-d-border-default: #e2e8f0;
+            --am-d-grey-light-text: #5a6e7c;
+
+            /* Light BGS */
+            --am-d-light-yellow-bg: #fff2dc;
+            --am-d-light-red-bg: #ffe6ea;
+            --am-d-light-green-bg: #d5ffe5;
+
+
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--am-d-bg);
+            color: var(--am-d-text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            padding: 24px 16px;
+            min-height: 100vh;
+            font-size: 14px;
+        }
+
+        /* Container */
+        .am-d-container {
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Header Styles */
+        .am-d-header {
+            margin-bottom: 20px;
+            background-color: var(--am-d-white);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: var(--am-d-card-shadow);
+            border: 1px solid var(--am-d-border-light);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .am-d-header-icon {
+            font-size: 28px;
+            background-color: var(--am-d-light-red-bg);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            color: var(--am-d-primary);
+            flex-shrink: 0;
+        }
+
+        .am-d-header-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .am-d-header-content {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .am-d-header-title {
+            color: var(--am-d-secondary);
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .am-d-header-subtitle {
+            color: var(--am-d-grey-light-text);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* Section Title */
+        .am-d-section-title {
+            color: var(--am-d-secondary);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-left: 4px;
+        }
+
+        /* Card Styles */
+        .am-d-card {
+            background-color: var(--am-d-white);
+            border-radius: 10px;
+            box-shadow: var(--am-d-card-shadow);
+            border: 1px solid var(--am-d-border-light);
+            margin-bottom: 14px;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .am-d-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        .am-d-card-header {
+            background-color: var(--am-d-white);
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--am-d-border-default);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .am-d-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--am-d-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .am-d-badge {
+            font-size: 10px;
+            font-weight: 600;
+            background-color: var(--am-d-border-light);
+            color: var(--am-d-grey-light-text);
+            padding: 3px 8px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .am-d-card-body {
+            padding: 8px 14px;
+        }
+
+        /* List Items */
+        .am-d-field-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--am-d-border-light);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .am-d-field-row:last-child {
+            border-bottom: none;
+        }
+
+        .am-d-field-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .am-d-field-arrow {
+            color: var(--am-d-border-default);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .am-d-field-name {
+            background-color: var(--am-d-bg);
+            border: 1px solid var(--am-d-border-default);
+            color: var(--am-d-secondary);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 12px;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        /* Status Indicators */
+        .am-d-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: var(--am-d-light-green-bg);
+            color: var(--am-d-success);
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .am-d-status.primary {
+            background-color: var(--am-d-light-red-bg);
+            color: var(--am-d-primary);
+        }
+
+        .am-d-status-icon {
+            width: 12px;
+            height: 12px;
+            stroke-width: 3;
+            flex-shrink: 0;
+        }
+
+        /* Footer Actions */
+        .am-d-action-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--am-d-border-default);
+            flex-wrap: wrap;
+        }
+
+        .am-d-btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: none;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .am-d-btn-primary {
+            background-color: var(--am-d-primary);
+            color: var(--am-d-white);
+            box-shadow: 0 4px 14px rgba(241, 94, 116, 0.3);
+        }
+
+        .am-d-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(241, 94, 116, 0.4);
+        }
+
+        .am-d-btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .am-d-btn-secondary {
+            background-color: var(--am-d-white);
+            color: var(--am-d-secondary);
+            border: 1px solid var(--am-d-border-default);
+        }
+
+        .am-d-btn-secondary:hover {
+            background-color: var(--am-d-bg);
+            border-color: var(--am-d-grey-light-text);
+            color: var(--am-d-text);
+        }
+
+        .am-d-btn-icon {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .footer-note {
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 400;
+    margin: 2rem;
+}
+
+        /* RESPONSIVE BREAKPOINTS */
+
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            body {
+                padding: 16px 12px;
+            }
+
+            .am-d-header {
+                padding: 16px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .am-d-header-icon {
+                width: 50px;
+                height: 50px;
+            }
+
+            .am-d-header-icon svg {
+                width: 24px;
+                height: 24px;
+            }
+
+            .am-d-header-title {
+                font-size: 18px;
+            }
+
+            .am-d-header-subtitle {
+                font-size: 12px;
+            }
+
+            .am-d-section-title {
+                font-size: 14px;
+                text-align: center;
+            }
+
+            .am-d-card-header {
+                padding: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .am-d-card-title {
+                font-size: 13px;
+            }
+
+            .am-d-card-body {
+                padding: 6px 12px;
+            }
+
+            .am-d-field-row {
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .am-d-field-info {
+                justify-content: flex-start;
+            }
+
+            .am-d-field-name {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+
+            .am-d-status {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+
+            .am-d-action-bar {
+                flex-direction: column;
+            }
+
+            .am-d-btn {
+                width: 100%;
+                min-width: unset;
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+        }
+
+        /* Mobile devices */
+        @media (min-width: 481px) and (max-width: 600px) {
+            body {
+                padding: 24px 16px;
+            }
+
+            .am-d-header {
+                padding: 14px;
+            }
+
+            .am-d-header-title {
+                font-size: 20px;
+            }
+
+            .am-d-card-header {
+                padding: 12px;
+            }
+
+            .am-d-field-row {
+                padding: 10px 0;
+            }
+
+            .am-d-action-bar {
+                flex-direction: column;
+            }
+
+            .am-d-btn {
+                width: 100%;
+                min-width: unset;
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
+
+        /* Tablets */
+        @media (min-width: 601px) and (max-width: 768px) {
+            .am-d-container {
+                max-width: 100%;
+                padding: 0 16px;
+            }
+
+            .am-d-header {
+                padding: 18px;
+            }
+
+            .am-d-header-title {
+                font-size: 22px;
+            }
+
+            .am-d-action-bar {
+                flex-wrap: wrap;
+            }
+
+            .am-d-btn {
+                flex: 1 1 calc(50% - 8px);
+                min-width: 180px;
+            }
+        }
+
+        /* Small desktop */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .am-d-container {
+                max-width: 800px;
+            }
+
+            .am-d-header {
+                padding: 24px;
+            }
+        }
+
+        /* Large desktop */
+        @media (min-width: 1200px) {
+            .am-d-container {
+                max-width: 1000px;
+            }
+
+            .am-d-header {
+                padding: 28px;
+            }
+
+            .am-d-header-title {
+                font-size: 26px;
+            }
+
+            .am-d-card-title {
+                font-size: 18px;
+            }
+
+            .am-d-btn {
+                padding: 14px 28px;
+                font-size: 15px;
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .am-d-header-icon,
+            .am-d-status-icon,
+            .am-d-btn-icon {
+                transform: translateZ(0);
+            }
+        }
+
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            .am-d-card,
+            .am-d-btn,
+            .am-d-header-icon,
+            .am-d-status-icon,
+            .am-d-btn-icon {
+                transition: none;
+                transform: none !important;
+            }
+
+            .am-d-card:hover {
+                transform: none;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .am-d-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                break-inside: avoid;
+            }
+
+            .am-d-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="am-d-container" id="am-d-dashboard">
+        
+        <!-- Header Section -->
+        <header class="am-d-header" id="am-d-header">
+            <div class="am-d-header-icon" id="am-d-header-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+            </div>
+            <div class="am-d-header-content" id="am-d-header-content">
+                <h1 class="am-d-header-title" id="am-d-title">Database Management</h1>
+                <p class="am-d-header-subtitle" id="am-d-subtitle">Check, sync, and manage your AuthMe database tables securely.</p>
+            </div>
+        </header>
+
+        <h2 class="am-d-section-title" id="am-d-section-overview">Table Status Overview</h2>
+
+        <!-- Table Card 1 -->
+        <article class="am-d-card" id="am-d-card-otp">
+            <div class="am-d-card-header" id="am-d-card-header-otp">
+                <div class="am-d-card-title" id="am-d-card-title-otp">
+                    wp_authme_otp_storage
+                    <span class="am-d-badge" id="am-d-badge-otp">Table</span>
+                </div>
+                <div class="am-d-status primary" id="am-d-status-otp">
+                    <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Exists
+                </div>
+            </div>
+            <div class="am-d-card-body" id="am-d-card-body-otp">
+                
+                <!-- Field: id -->
+                <div class="am-d-field-row" id="am-d-field-row-id">
+                    <div class="am-d-field-info" id="am-d-field-info-id">
+                        <span class="am-d-field-arrow" id="am-d-field-arrow-id">↳</span>
+                        <span class="am-d-field-name" id="am-d-field-name-id">id</span>
+                    </div>
+                    <div class="am-d-status" id="am-d-status-id">
+                        <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        OK
+                    </div>
+                </div>
+
+                <!-- Field: email -->
+                <div class="am-d-field-row" id="am-d-field-row-email">
+                    <div class="am-d-field-info" id="am-d-field-info-email">
+                        <span class="am-d-field-arrow" id="am-d-field-arrow-email">↳</span>
+                        <span class="am-d-field-name" id="am-d-field-name-email">email</span>
+                    </div>
+                    <div class="am-d-status" id="am-d-status-email">
+                        <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        OK
+                    </div>
+                </div>
+
+                <!-- Field: otp_code -->
+                <div class="am-d-field-row" id="am-d-field-row-otp">
+                    <div class="am-d-field-info" id="am-d-field-info-otp">
+                        <span class="am-d-field-arrow" id="am-d-field-arrow-otp">↳</span>
+                        <span class="am-d-field-name" id="am-d-field-name-otp">otp_code</span>
+                    </div>
+                    <div class="am-d-status" id="am-d-status-otp-code">
+                        <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        OK
+                    </div>
+                </div>
+
+                <!-- Field: purpose -->
+                <div class="am-d-field-row" id="am-d-field-row-purpose">
+                    <div class="am-d-field-info" id="am-d-field-info-purpose">
+                        <span class="am-d-field-arrow" id="am-d-field-arrow-purpose">↳</span>
+                        <span class="am-d-field-name" id="am-d-field-name-purpose">purpose</span>
+                    </div>
+                    <div class="am-d-status" id="am-d-status-purpose">
+                        <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        OK
+                    </div>
+                </div>
+
+                <!-- Field: created_at -->
+                <div class="am-d-field-row" id="am-d-field-row-created">
+                    <div class="am-d-field-info" id="am-d-field-info-created">
+                        <span class="am-d-field-arrow" id="am-d-field-arrow-created">↳</span>
+                        <span class="am-d-field-name" id="am-d-field-name-created">created_at</span>
+                    </div>
+                    <div class="am-d-status" id="am-d-status-created">
+                        <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        OK
+                    </div>
+                </div>
+
+                <!-- Field: expires_at -->
+                <div class="am-d-field-row" id="am-d-field-row-expires">
+                    <div class="am-d-field-info" id="am-d-field-info-expires">
+                        <span class="am-d-field-arrow" id="am-d-field-arrow-expires">↳</span>
+                        <span class="am-d-field-name" id="am-d-field-name-expires">expires_at</span>
+                    </div>
+                    <div class="am-d-status" id="am-d-status-expires">
+                        <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        OK
+                    </div>
+                </div>
+
+                <!-- Field: is_verified -->
+                <div class="am-d-field-row" id="am-d-field-row-verified">
+                    <div class="am-d-field-info" id="am-d-field-info-verified">
+                        <span class="am-d-field-arrow" id="am-d-field-arrow-verified">↳</span>
+                        <span class="am-d-field-name" id="am-d-field-name-verified">is_verified</span>
+                    </div>
+                    <div class="am-d-status" id="am-d-status-verified">
+                        <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        OK
+                    </div>
+                </div>
+
+                <!-- Field: user_data -->
+                <div class="am-d-field-row" id="am-d-field-row-userdata">
+                    <div class="am-d-field-info" id="am-d-field-info-userdata">
+                        <span class="am-d-field-arrow" id="am-d-field-arrow-userdata">↳</span>
+                        <span class="am-d-field-name" id="am-d-field-name-userdata">user_data</span>
+                    </div>
+                    <div class="am-d-status" id="am-d-status-userdata">
+                        <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        OK
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Table Card 2 -->
+        <article class="am-d-card" id="am-d-card-host">
+            <div class="am-d-card-header" id="am-d-card-header-host">
+                <div class="am-d-card-title" id="am-d-card-title-host">
+                    wp_host_request
+                    <span class="am-d-badge" id="am-d-badge-host">Table</span>
+                </div>
+                <div class="am-d-status primary" id="am-d-status-host">
+                    <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Exists
+                </div>
+            </div>
+            <div class="am-d-card-body" id="am-d-card-body-host">
+                
+                <!-- Field: id -->
+                <div class="am-d-field-row" id="am-d-field-row-host-id">
+                    <div class="am-d-field-info" id="am-d-field-info-host-id">
+                        <span class="am-d-field-arrow" id="am-d-field-arrow-host-id">↳</span>
+                        <span class="am-d-field-name" id="am-d-field-name-host-id">id</span>
+                    </div>
+                    <div class="am-d-status" id="am-d-status-host-id">
+                        <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        OK
+                    </div>
+                </div>
+
+                <!-- Field: user_data -->
+                <div class="am-d-field-row" id="am-d-field-row-host-userdata">
+                    <div class="am-d-field-info" id="am-d-field-info-host-userdata">
+                        <span class="am-d-field-arrow" id="am-d-field-arrow-host-userdata">↳</span>
+                        <span class="am-d-field-name" id="am-d-field-name-host-userdata">user_data</span>
+                    </div>
+                    <div class="am-d-status" id="am-d-status-host-userdata">
+                        <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        OK
+                    </div>
+                </div>
+
+                <!-- Field: status -->
+                <div class="am-d-field-row" id="am-d-field-row-host-status">
+                    <div class="am-d-field-info" id="am-d-field-info-host-status">
+                        <span class="am-d-field-arrow" id="am-d-field-arrow-host-status">↳</span>
+                        <span class="am-d-field-name" id="am-d-field-name-host-status">status</span>
+                    </div>
+                    <div class="am-d-status" id="am-d-status-host-status">
+                        <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        OK
+                    </div>
+                </div>
+
+                <!-- Field: date -->
+                <div class="am-d-field-row" id="am-d-field-row-host-date">
+                    <div class="am-d-field-info" id="am-d-field-info-host-date">
+                        <span class="am-d-field-arrow" id="am-d-field-arrow-host-date">↳</span>
+                        <span class="am-d-field-name" id="am-d-field-name-host-date">date</span>
+                    </div>
+                    <div class="am-d-status" id="am-d-status-host-date">
+                        <svg class="am-d-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        OK
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Action Buttons -->
+        <nav class="am-d-action-bar" id="am-d-action-bar">
+            <button class="am-d-btn am-d-btn-primary" id="am-d-btn-update" type="button">
+                <svg class="am-d-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 2v6h-6"></path>
+                    <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+                    <path d="M3 22v-6h6"></path>
+                    <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
+                </svg>
+                Create / Update Tables
+            </button>
+            <button class="am-d-btn am-d-btn-secondary" id="am-d-btn-refresh" type="button">
+                <svg class="am-d-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+                Refresh Status
+            </button>
+        </nav>
+
+        <div class="footer-note">✅ All tables & columns validated • AuthMe schema integrity</div>
+
+    </div>
+
+</body>
+</html>

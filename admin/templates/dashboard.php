@@ -1,4 +1,5 @@
 <?php
+
 /**
  * AuthMe Admin — Dashboard Page
  *
@@ -13,19 +14,19 @@
  * @package AuthMe
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
 /* ── Fetch dynamic data ─────────────────── */
-$authme_version    = defined( 'AUTHME_VERSION' ) ? AUTHME_VERSION : '1.0.0';
-$customer_count    = count( get_users( array( 'role' => 'traveller' ) ) );
+$authme_version    = defined('AUTHME_VERSION') ? AUTHME_VERSION : '1.0.0';
+$customer_count    = count(get_users(array('role' => 'traveller')));
 $home_url          = home_url();
-$authme_url        = home_url( '/authme' );
-$become_host_url   = home_url( '/?become-host' );
-$logout_url        = home_url( '/?authme_logout=1' );
-$db_page_url       = admin_url( 'admin.php?page=authme-database' );
-$host_page_url     = admin_url( 'admin.php?page=authme-host-requests' );
+$authme_url        = home_url('/authme');
+$become_host_url   = home_url('/?become-host');
+$logout_url        = home_url('/?authme_logout=1');
+$db_page_url       = admin_url('admin.php?page=authme-database');
+$host_page_url     = admin_url('admin.php?page=authme-host-requests');
 ?>
 
 <div id="am-dashboard">
@@ -46,11 +47,11 @@ $host_page_url     = admin_url( 'admin.php?page=authme-host-requests' );
     <div class="am-stats-grid">
         <div class="am-stat-card">
             <div class="am-stat-label">VERSION</div>
-            <div class="am-stat-value"><?php echo esc_html( $authme_version ); ?></div>
+            <div class="am-stat-value"><?php echo esc_html($authme_version); ?></div>
         </div>
         <div class="am-stat-card">
             <div class="am-stat-label">TOTAL CUSTOMERS</div>
-            <div class="am-stat-value"><?php echo esc_html( $customer_count ); ?></div>
+            <div class="am-stat-value"><?php echo esc_html($customer_count); ?></div>
         </div>
         <div class="am-stat-card">
             <div class="am-stat-label">SECURITY</div>
@@ -82,8 +83,8 @@ $host_page_url     = admin_url( 'admin.php?page=authme-host-requests' );
                     <h3 class="am-heading">1. Direct URL</h3>
                     <p class="am-text">Share this link — when visited, redirects to homepage &amp; auto‑opens the auth popup.</p>
                     <div class="am-code-block">
-                        <span class="am-code-text"><?php echo esc_url( $authme_url ); ?></span>
-                        <button class="am-copy-btn" data-copy="<?php echo esc_url( $authme_url ); ?>">Copy</button>
+                        <span class="am-code-text"><?php echo esc_url($authme_url); ?></span>
+                        <button class="am-copy-btn" data-copy="<?php echo esc_url($authme_url); ?>">Copy</button>
                     </div>
                 </div>
 
@@ -117,8 +118,8 @@ $host_page_url     = admin_url( 'admin.php?page=authme-host-requests' );
                     <h3 class="am-heading">1. Become a Host — Direct URL</h3>
                     <p class="am-text">Share this link to automatically load and open the "Become a Host" multi‑step application modal.</p>
                     <div class="am-code-block">
-                        <span class="am-code-text"><?php echo esc_url( $become_host_url ); ?></span>
-                        <button class="am-copy-btn" data-copy="<?php echo esc_url( $become_host_url ); ?>">Copy</button>
+                        <span class="am-code-text"><?php echo esc_url($become_host_url); ?></span>
+                        <button class="am-copy-btn" data-copy="<?php echo esc_url($become_host_url); ?>">Copy</button>
                     </div>
                 </div>
 
@@ -141,8 +142,8 @@ $host_page_url     = admin_url( 'admin.php?page=authme-host-requests' );
                     <h3 class="am-heading">1. Logout — Direct URL</h3>
                     <p class="am-text">Securely log out the current user and redirect back to the homepage. Works natively for any user session.</p>
                     <div class="am-code-block">
-                        <span class="am-code-text"><?php echo esc_url( $logout_url ); ?></span>
-                        <button class="am-copy-btn" data-copy="<?php echo esc_url( $logout_url ); ?>">Copy</button>
+                        <span class="am-code-text"><?php echo esc_url($logout_url); ?></span>
+                        <button class="am-copy-btn" data-copy="<?php echo esc_url($logout_url); ?>">Copy</button>
                     </div>
                 </div>
 
@@ -162,12 +163,12 @@ $host_page_url     = admin_url( 'admin.php?page=authme-host-requests' );
                 <h3 class="am-heading">📌 Quick Links</h3>
                 <div class="am-quick-link">
                     <span class="am-icon">🗄️</span>
-                    <a href="<?php echo esc_url( $db_page_url ); ?>" class="am-link-accent">Database Management</a>
+                    <a href="<?php echo esc_url($db_page_url); ?>" class="am-link-accent">Database Management</a>
                     <span class="am-quick-link-arrow">→</span>
                 </div>
                 <div class="am-quick-link">
                     <span class="am-icon">📋</span>
-                    <a href="<?php echo esc_url( $host_page_url ); ?>" class="am-link-accent">Host Requests</a>
+                    <a href="<?php echo esc_url($host_page_url); ?>" class="am-link-accent">Host Requests</a>
                     <span class="am-quick-link-arrow">→</span>
                 </div>
                 <div class="am-quick-link">
@@ -192,7 +193,7 @@ $host_page_url     = admin_url( 'admin.php?page=authme-host-requests' );
                 <hr class="am-divider">
                 <div class="am-flex-between">
                     <span class="am-text-medium">Plugin Version:</span>
-                    <span class="am-text-secondary"><?php echo esc_html( $authme_version ); ?></span>
+                    <span class="am-text-secondary"><?php echo esc_html($authme_version); ?></span>
                 </div>
                 <div class="am-flex-between">
                     <span class="am-text-medium">Compatibility:</span>
@@ -206,7 +207,7 @@ $host_page_url     = admin_url( 'admin.php?page=authme-host-requests' );
     <!-- Footer                                            -->
     <!-- ================================================ -->
     <footer class="am-footer">
-        AuthMe WordPress Authentication Plugin © Art-Tech Fuzion — seamless auth, host management &amp; OTP security.<br>
+        AuthMe WordPress Authentication Plugin by Art-Tech Fuzion — seamless auth, host management &amp; OTP security.<br>
         Use <code class="am-inline-code">/authme</code> endpoint, trigger links, or JS methods to integrate.
     </footer>
 
