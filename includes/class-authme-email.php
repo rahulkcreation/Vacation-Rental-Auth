@@ -2,7 +2,11 @@
 /**
  * AuthMe Email Handler
  *
- * Sends beautifully designed OTP emails using WordPress wp_mail().
+ * Sends all email notifications using WordPress wp_mail().
+ * Uses three template files:
+ *   email-otp.php     — OTP verification emails
+ *   email-msg.php     — Message-only notifications
+ *   email-details.php — Credential-based notifications
  *
  * @package AuthMe
  */
@@ -16,65 +20,33 @@ class AuthMe_Email {
     /**
      * Send an OTP email to the user.
      *
+     * Uses email-otp.php template which dynamically adjusts
+     * content based on the purpose parameter.
+     *
      * @param string $to_email  Recipient email address.
      * @param string $otp_code  The 6-digit OTP code.
-     * @param string $purpose   Either 'registration' or 'login'.
+     * @param string $purpose   'registration' | 'password_reset' | 'host_request'
      * @return bool             True if mail was sent successfully.
      */
     public function send_otp_email( $to_email, $otp_code, $purpose = 'registration' ) {
 
-        if ( $purpose === 'login' ) {
-            $subject = 'Your Login Verification Code — AuthMe';
-        } elseif ( $purpose === 'password_reset' ) {
-            $subject = 'Your Reset Password Verification Code — AuthMe';
+        $site_name = get_bloginfo( 'name' );
+
+        /* Build the subject line based on purpose */
+        if ( $purpose === 'password_reset' ) {
+            $subject = 'Reset Password Verification code — ' . $site_name;
         } elseif ( $purpose === 'host_request' ) {
-            $subject = 'Host Application verification';
+            $subject = 'Host Id Verification Code — ' . $site_name;
         } else {
-            $subject = 'Your Registration Verification Code — AuthMe';
+            $subject = 'Your Registration Verification Code — ' . $site_name;
         }
 
-        // Build the HTML email body from the template
-        $body = $this->get_email_template( $otp_code, $purpose );
-
-        // Set content type to HTML
-        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
-
-        $sent = wp_mail( $to_email, $subject, $body, $headers );
-
-        return $sent;
-    }
-
-    /* ──────────────────────────────────────── */
-
-    /**
-     * Get the HTML email template with the OTP code injected.
-     *
-     * @param string $otp_code  The 6-digit OTP.
-     * @param string $purpose   registration | login.
-     * @return string           HTML email body.
-     */
-    private function get_email_template( $otp_code, $purpose ) {
+        /* Build the HTML email body from template */
         ob_start();
-        // Variables available inside the template
-        $authme_otp_code = $otp_code;
+        $authme_otp_code    = $otp_code;
         $authme_otp_purpose = $purpose;
-        include AUTHME_PLUGIN_DIR . 'templates/email-otp.php';
-        return ob_get_clean();
-    }
-    /* ──────────────────────────────────────── */
-
-    /**
-     * Send a "password changed" notification email.
-     *
-     * @param string $to_email    Recipient email address.
-     * @param string $user_name   User's display name.
-     * @return bool               True if mail was sent successfully.
-     */
-    public function send_password_changed_email( $to_email, $user_name ) {
-
-        $subject = 'Your Password Was Changed — ' . get_bloginfo( 'name' );
-
-        $body = $this->get_password_changed_template( $user_name );
+        include AUTHME_PLUGIN_DIR . 'frontend/templates/email-otp.php';
+        $body = ob_get_clean();
 
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
@@ -84,16 +56,30 @@ class AuthMe_Email {
     /* ──────────────────────────────────────── */
 
     /**
-     * Get the HTML template for the password-changed email.
+     * Send a "password changed" notification email.
      *
-     * @param string $user_name  User's display name.
-     * @return string            HTML email body.
+     * Uses email-msg.php template with password-change content.
+     *
+     * @param string $to_email    Recipient email address.
+     * @param string $user_name   User's display name (unused now but kept for API compat).
+     * @return bool               True if mail was sent successfully.
      */
-    private function get_password_changed_template( $user_name ) {
+    public function send_password_changed_email( $to_email, $user_name ) {
+
+        $site_name   = get_bloginfo( 'name' );
+        $admin_email = get_option( 'admin_email' );
+        $subject     = 'Reset Password Successfully — ' . $site_name;
+
         ob_start();
-        $authme_user_name = $user_name;
-        include AUTHME_PLUGIN_DIR . 'templates/email-password-changed.php';
-        return ob_get_clean();
+        $authme_email_title = 'Account password changed';
+        $authme_email_desc  = 'Your account password is changed successfully. Now your requested password is saved to database, you can login with your new password.';
+        $authme_email_note  = 'Note: If you did not changed your password then reset your password now or contact to admin on this email - (' . $admin_email . ').';
+        include AUTHME_PLUGIN_DIR . 'frontend/templates/email-msg.php';
+        $body = ob_get_clean();
+
+        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+
+        return wp_mail( $to_email, $subject, $body, $headers );
     }
 
     /* ──────────────────────────────────────── */
@@ -101,42 +87,57 @@ class AuthMe_Email {
     /**
      * Send email when a Host Account is approved.
      *
-     * @param string $to_email
-     * @param string $username
-     * @param string $password
+     * Uses email-details.php template which shows login credentials.
+     *
+     * @param string $to_email  Recipient email address.
+     * @param string $username  Generated username for the host.
+     * @param string $password  Generated password for the host.
      * @return bool
      */
     public function send_host_approved_email( $to_email, $username, $password ) {
-        $subject = 'Congratulations! Your Host Account is Approved — ' . get_bloginfo( 'name' );
-        
-        ob_start();
-        $authme_host_username = $username;
-        $authme_host_password = $password;
+
         $site_name = get_bloginfo( 'name' );
-        include AUTHME_PLUGIN_DIR . 'templates/email-host-approved.php';
+        $subject   = 'Congratulations!! Your host id verified — ' . $site_name;
+
+        ob_start();
+        $authme_email_title    = 'Application Approved';
+        $authme_email_desc     = 'Congratulations, your host account is approved! Welcome to our website, Now you can list your property. Here are your securely generated login credentials:';
+        $authme_host_username  = $username;
+        $authme_host_password  = $password;
+        $authme_email_note     = 'Note: This is system generated password. Please securely login and change this auto-generated password immediately!';
+        include AUTHME_PLUGIN_DIR . 'frontend/templates/email-details.php';
         $body = ob_get_clean();
 
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+
         return wp_mail( $to_email, $subject, $body, $headers );
     }
+
+    /* ──────────────────────────────────────── */
 
     /**
      * Send email when a Host Account is rejected.
      *
-     * @param string $to_email
+     * Uses email-msg.php template with rejection content.
+     *
+     * @param string $to_email  Recipient email address.
      * @return bool
      */
     public function send_host_rejected_email( $to_email ) {
-        $subject = 'Update on Your Host Account Request — ' . get_bloginfo( 'name' );
-        
-        ob_start();
-        $admin_email = get_option( 'admin_email' );
+
         $site_name   = get_bloginfo( 'name' );
-        include AUTHME_PLUGIN_DIR . 'templates/email-host-rejected.php';
+        $admin_email = get_option( 'admin_email' );
+        $subject     = 'Regret!! Your host id unverified — ' . $site_name;
+
+        ob_start();
+        $authme_email_title = 'Application Rejected';
+        $authme_email_desc  = 'We are unable to verified you email because of some document is fake or missing.';
+        $authme_email_note  = 'Note: This is auto-generated mail, If you have any query Contact to admin on this email - (' . $admin_email . ').';
+        include AUTHME_PLUGIN_DIR . 'frontend/templates/email-msg.php';
         $body = ob_get_clean();
 
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+
         return wp_mail( $to_email, $subject, $body, $headers );
     }
 }
-

@@ -3,17 +3,12 @@
  * ============================================
  *
  * Scoped to #authme-register-screen to prevent
- * style conflicts.
+ * style conflicts. All colors from global.css.
  *
  * @package AuthMe
  * ============================================ */
 
 /* ── Input Groups ────────────────────────── */
-
-
-
-
-
 #authme-register-screen .authme-input-group {
     margin-bottom: 20px;
 }
@@ -21,11 +16,11 @@
 #authme-register-screen .authme-input {
     width: 100%;
     padding: 14px 16px;
-    border: 1.5px solid var(--authme-border);
-    border-radius: var(--authme-radius-md);
+    border: 1.5px solid var(--authme-border-default);
+    border-radius: 10px;
     font-size: 15px;
-    color: var(--authme-text-main);
-    background-color: var(--authme-input-bg);
+    color: var(--authme-text);
+    background-color: var(--authme-white);
     font-family: var(--authme-font);
     transition: all 0.2s ease;
 }
@@ -33,11 +28,11 @@
 #authme-register-screen .authme-input:focus {
     outline: none;
     border-color: var(--authme-primary);
-    box-shadow: 0 0 0 4px var(--authme-primary-ring);
+    box-shadow: 0 0 0 4px var(--authme-light-red-bg);
 }
 
 #authme-register-screen .authme-input::placeholder {
-    color: var(--authme-text-placeholder);
+    color: var(--authme-grey-light-text);
 }
 
 /* Input states — success / error borders */
@@ -46,7 +41,7 @@
 }
 
 #authme-register-screen .authme-input.authme-input-success:focus {
-    box-shadow: 0 0 0 4px var(--authme-success-ring);
+    box-shadow: 0 0 0 4px var(--authme-light-green-bg);
 }
 
 #authme-register-screen .authme-input.authme-input-error {
@@ -54,7 +49,7 @@
 }
 
 #authme-register-screen .authme-input.authme-input-error:focus {
-    box-shadow: 0 0 0 4px var(--authme-error-ring);
+    box-shadow: 0 0 0 4px var(--authme-light-red-bg);
 }
 
 /* ── Field Messages ──────────────────────── */
@@ -92,7 +87,7 @@
     right: 12px;
     background: none;
     border: none;
-    color: var(--authme-text-muted);
+    color: var(--authme-grey-light-text);
     cursor: pointer;
     padding: 0;
     display: flex;
@@ -117,11 +112,11 @@
     min-width: 90px;
     height: 45px;
     padding: 14px 8px;
-    border: 1.5px solid var(--authme-border);
-    border-radius: var(--authme-radius-md);
+    border: 1.5px solid var(--authme-border-default);
+    border-radius: 10px;
     font-size: 14px;
-    color: var(--authme-text-main);
-    background-color: var(--authme-input-bg);
+    color: var(--authme-text);
+    background-color: var(--authme-white);
     font-family: var(--authme-font);
     cursor: pointer;
     transition: all 0.2s ease;
@@ -138,7 +133,7 @@
 #authme-register-screen .authme-country-select:focus {
     outline: none;
     border-color: var(--authme-primary);
-    box-shadow: 0 0 0 4px var(--authme-primary-ring);
+    box-shadow: 0 0 0 4px var(--authme-light-red-bg);
 }
 
 #authme-register-screen .authme-mobile-input {
@@ -151,7 +146,7 @@
     margin-top: 8px;
     height: 4px;
     border-radius: 4px;
-    background-color: var(--authme-border);
+    background-color: var(--authme-border-default);
     overflow: hidden;
     transition: all 0.3s ease;
 }
@@ -176,7 +171,7 @@
 
 #authme-register-screen .authme-password-strength .authme-strength-bar.authme-strength-good {
     width: 75%;
-    background-color: var(--authme-strength-good);
+    background-color: var(--authme-accent);
 }
 
 #authme-register-screen .authme-password-strength .authme-strength-bar.authme-strength-strong {
@@ -202,7 +197,7 @@
 
 #authme-register-screen .authme-remember-me label {
     font-size: 13.5px;
-    color: var(--authme-text-muted);
+    color: var(--authme-grey-light-text);
     cursor: pointer;
     user-select: none;
 }
@@ -214,7 +209,7 @@
     background-color: var(--authme-primary);
     color: var(--authme-white);
     border: none;
-    border-radius: var(--authme-radius-md);
+    border-radius: 10px;
     font-size: 15px;
     font-weight: 600;
     font-family: var(--authme-font);
@@ -224,9 +219,9 @@
 }
 
 #authme-register-screen .authme-btn-primary:hover:not(:disabled) {
-    background-color: var(--authme-primary-hover);
+    opacity: 0.9;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px var(--authme-primary-shadow);
+    box-shadow: var(--authme-card-shadow);
 }
 
 #authme-register-screen .authme-btn-primary:active:not(:disabled) {

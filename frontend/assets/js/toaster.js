@@ -2,9 +2,10 @@
  * AuthMe — Toaster Notification System
  *
  * Provides authmeToast(type, message, duration) for showing
- * stacking, auto-dismissing toast notifications.
+ * a simple centered toast notification at the top of the viewport.
  *
  * Types: 'success', 'error', 'warning', 'info'
+ * (Controls the left-border accent color)
  *
  * @package AuthMe
  */
@@ -12,13 +13,8 @@
 (function (window) {
     'use strict';
 
-    // Icon map for toast types
-    var iconMap = {
-        success: '✓',
-        error:   '✕',
-        warning: '!',
-        info:    'i',
-    };
+    /* Timer reference for auto-dismiss */
+    var toasterTimeout = null;
 
     /**
      * Show a toast notification.
@@ -30,79 +26,62 @@
     function authmeToast(type, message, duration) {
         duration = duration || 5000;
 
-        var container = document.getElementById('authme-toaster-container');
-        if (!container) return;
+        var toaster = document.getElementById('authme-toaster');
+        var toasterMessage = document.getElementById('authme-toaster-message');
 
-        // Build toast element
-        var toast = document.createElement('div');
-        toast.className = 'authme-toast authme-toast-' + type;
+        if (!toaster || !toasterMessage) return;
 
-        // Icon
-        var icon = document.createElement('span');
-        icon.className = 'authme-toast-icon';
-        icon.textContent = iconMap[type] || 'i';
-        toast.appendChild(icon);
+        /* Set the message text */
+        toasterMessage.textContent = message;
 
-        // Message
-        var msg = document.createElement('span');
-        msg.className = 'authme-toast-message';
-        msg.textContent = message;
-        toast.appendChild(msg);
+        /* Reset type classes */
+        toaster.className = 'authme-toaster';
 
-        // Close button
-        var closeBtn = document.createElement('button');
-        closeBtn.className = 'authme-toast-close';
-        closeBtn.innerHTML = '&times;';
-        closeBtn.setAttribute('aria-label', 'Close notification');
-        closeBtn.addEventListener('click', function () {
-            dismissToast(toast);
-        });
-        toast.appendChild(closeBtn);
+        /* Add type-specific class for left-border accent color */
+        if (type && type !== '') {
+            toaster.classList.add('authme-toaster-' + type);
+        }
 
-        // Progress bar
-        var progress = document.createElement('div');
-        progress.className = 'authme-toast-progress';
-        progress.style.animationDuration = duration + 'ms';
-        toast.appendChild(progress);
+        /* Show the toaster */
+        toaster.style.display = 'block';
 
-        // Add to container
-        container.appendChild(toast);
+        /* Clear any existing timeout */
+        if (toasterTimeout) {
+            clearTimeout(toasterTimeout);
+        }
 
-        // Auto-dismiss
-        var timer = setTimeout(function () {
-            dismissToast(toast);
+        /* Auto-hide after the specified duration */
+        toasterTimeout = setTimeout(function () {
+            authmeCloseToaster();
         }, duration);
-
-        // Store timer reference for potential cancellation
-        toast._authmeTimer = timer;
     }
 
     /**
-     * Dismiss a toast with animation.
-     *
-     * @param {HTMLElement} toast The toast element to dismiss.
+     * Close the toaster with a fade-out animation.
      */
-    function dismissToast(toast) {
-        if (!toast || toast._authmeDismissing) return;
-        toast._authmeDismissing = true;
+    function authmeCloseToaster() {
+        var toaster = document.getElementById('authme-toaster');
+        if (!toaster) return;
 
-        // Clear the auto-dismiss timer
-        if (toast._authmeTimer) {
-            clearTimeout(toast._authmeTimer);
-        }
+        toaster.classList.add('authme-toaster-hiding');
 
-        // Add leaving animation class
-        toast.classList.add('authme-toast-leaving');
-
-        // Remove after animation
         setTimeout(function () {
-            if (toast.parentNode) {
-                toast.parentNode.removeChild(toast);
-            }
+            toaster.style.display = 'none';
+            toaster.classList.remove('authme-toaster-hiding');
         }, 300);
     }
 
-    // Expose globally
+    /* ── Bind close button ──────────────── */
+    document.addEventListener('DOMContentLoaded', function () {
+        var closeBtn = document.getElementById('authme-toaster-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                authmeCloseToaster();
+            });
+        }
+    });
+
+    /* Expose globally */
     window.authmeToast = authmeToast;
 
 })(window);

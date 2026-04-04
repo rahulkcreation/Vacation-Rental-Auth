@@ -154,17 +154,14 @@ class AuthMe_Assets_Loader {
             'tpl_host_request'    => array(
                 'dir' => $base_dir . 'frontend/templates/host-request.php',
             ),
-            'tpl_email_password_changed' => array(
-                'dir' => $base_dir . 'frontend/templates/email-password-changed.php',
-            ),
             'tpl_email_otp' => array(
                 'dir' => $base_dir . 'frontend/templates/email-otp.php',
             ),
-            'tpl_email_host_approved' => array(
-                'dir' => $base_dir . 'frontend/templates/email-host-approved.php',
+            'tpl_email_msg' => array(
+                'dir' => $base_dir . 'frontend/templates/email-msg.php',
             ),
-            'tpl_email_host_rejected' => array(
-                'dir' => $base_dir . 'frontend/templates/email-host-rejected.php',
+            'tpl_email_details' => array(
+                'dir' => $base_dir . 'frontend/templates/email-details.php',
             ),
 
             /* ── Admin CSS/JS Files ─────────────── */

@@ -2,194 +2,114 @@
  * AuthMe — Toaster Notification Styles
  * ============================================
  *
- * Top-right stacking toast notifications with
- * slide-in / fade-out animations.
+ * Simple centered top toast notification.
+ * All colors from global.css variables only.
  *
  * @package AuthMe
  * ============================================ */
 
-/* ── Container ───────────────────────────── */
-.authme-toaster-container {
+/* ── Toast Container ────────────────────── */
+.authme-toaster {
     position: fixed;
     top: 20px;
-    right: 20px;
-    z-index: 999999;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    pointer-events: none;
-    max-width: 380px;
-    width: 100%;
-}
-
-/* ── Individual Toast ────────────────────── */
-.authme-toast {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: var(--authme-white);
-    border-radius: 12px;
-    padding: 14px 16px;
-    box-shadow: var(--authme-toast-shadow);
-    pointer-events: auto;
-    animation: authmeToastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    border-left: 4px solid transparent;
-    overflow: hidden;
-    position: relative;
+    border: 1px solid var(--authme-border-default);
+    border-left: 4px solid var(--authme-primary);
+    border-radius: 8px;
+    box-shadow: var(--authme-card-shadow);
+    padding: 16px 40px 16px 16px;
+    min-width: 300px;
+    max-width: 400px;
+    z-index: 999999;
+    animation: authmeToasterFadeInDown 0.3s ease-out;
+    font-family: var(--authme-font);
 }
 
-/* ── Toast Types ─────────────────────────── */
-.authme-toast.authme-toast-success {
+/* ── Type Variants (left-border color) ──── */
+.authme-toaster.authme-toaster-success {
     border-left-color: var(--authme-success);
 }
 
-.authme-toast.authme-toast-error {
+.authme-toaster.authme-toaster-error {
     border-left-color: var(--authme-error);
 }
 
-.authme-toast.authme-toast-warning {
+.authme-toaster.authme-toaster-warning {
     border-left-color: var(--authme-warning);
 }
 
-.authme-toast.authme-toast-info {
-    border-left-color: var(--authme-info);
+.authme-toaster.authme-toaster-info {
+    border-left-color: var(--authme-accent);
 }
 
-/* ── Toast Icon ──────────────────────────── */
-.authme-toast-icon {
-    flex-shrink: 0;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    margin-top: 1px;
+/* ── Slide-in Animation ─────────────────── */
+@keyframes authmeToasterFadeInDown {
+    from {
+        transform: translateX(-50%) translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
 }
 
-.authme-toast-success .authme-toast-icon {
-    background-color: var(--authme-success-bg);
-    color: var(--authme-success);
+/* ── Slide-out Animation ────────────────── */
+@keyframes authmeToasterFadeOutUp {
+    from {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(-50%) translateY(-20px);
+        opacity: 0;
+    }
 }
 
-.authme-toast-error .authme-toast-icon {
-    background-color: var(--authme-error-bg);
-    color: var(--authme-error);
+.authme-toaster.authme-toaster-hiding {
+    animation: authmeToasterFadeOutUp 0.3s ease-out forwards;
 }
 
-.authme-toast-warning .authme-toast-icon {
-    background-color: var(--authme-warning-bg);
-    color: var(--authme-warning);
+/* ── Message Text ───────────────────────── */
+.authme-toaster-message {
+    color: var(--authme-grey-light-text);
+    font-size: 13px;
+    line-height: 1.4;
 }
 
-.authme-toast-info .authme-toast-icon {
-    background-color: var(--authme-info-bg);
-    color: var(--authme-info);
-}
-
-/* ── Toast Message ───────────────────────── */
-.authme-toast-message {
-    flex: 1;
-    font-size: 13.5px;
-    line-height: 1.5;
-    color: var(--authme-text-main);
-    font-weight: 500;
-}
-
-/* ── Toast Close ─────────────────────────── */
-.authme-toast-close {
-    flex-shrink: 0;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* ── Close Button ───────────────────────── */
+.authme-toaster-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
     background: none;
     border: none;
-    color: var(--authme-text-muted);
     cursor: pointer;
-    padding: 0;
-    border-radius: 4px;
-    transition: all 0.15s ease;
-    font-size: 16px;
+    padding: 4px;
+    color: var(--authme-grey-light-text);
+    font-size: 18px;
     line-height: 1;
+    transition: color 0.2s;
 }
 
-.authme-toast-close:hover {
-    background-color: var(--authme-bg);
-    color: var(--authme-text-main);
+.authme-toaster-close:hover {
+    color: var(--authme-primary);
 }
 
-/* ── Progress bar (auto-dismiss indicator) ── */
-.authme-toast-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    border-radius: 0 0 0 12px;
-    animation: authmeToastProgress linear forwards;
-}
-
-.authme-toast-success .authme-toast-progress {
-    background-color: var(--authme-success);
-}
-
-.authme-toast-error .authme-toast-progress {
-    background-color: var(--authme-error);
-}
-
-.authme-toast-warning .authme-toast-progress {
-    background-color: var(--authme-warning);
-}
-
-.authme-toast-info .authme-toast-progress {
-    background-color: var(--authme-info);
-}
-
-/* ── Animations ──────────────────────────── */
-@keyframes authmeToastSlideIn {
-    from {
-        opacity: 0;
-        transform: translateX(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
+/* ── Responsive: ≤ 400px ────────────────── */
+@media (max-width: 400px) {
+    .authme-toaster {
+        min-width: 200px;
+        max-width: 230px;
     }
 }
 
-.authme-toast.authme-toast-leaving {
-    animation: authmeToastFadeOut 0.3s ease forwards;
-}
-
-@keyframes authmeToastFadeOut {
-    from {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateX(40px);
-    }
-}
-
-@keyframes authmeToastProgress {
-    from {
-        width: 100%;
-    }
-    to {
-        width: 0%;
-    }
-}
-
-/* ── Responsive ──────────────────────────── */
-@media (max-width: 480px) {
-    .authme-toaster-container {
-        right: 10px;
-        left: 10px;
-        max-width: none;
-        width: auto;
+/* ── Responsive: > 400px ────────────────── */
+@media (min-width: 401px) {
+    .authme-toaster {
+        min-width: 300px;
+        max-width: 400px;
     }
 }

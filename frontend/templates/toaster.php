@@ -1,9 +1,9 @@
 <?php
 /**
- * AuthMe Toaster Container Template
+ * AuthMe Toaster Notification Template
  *
- * An empty container where toast notifications are
- * dynamically injected by toaster.js.
+ * Simple centered toast notification shown at the
+ * top of the viewport. Controlled by toaster.js.
  *
  * @package AuthMe
  */
@@ -13,5 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<!-- AuthMe Toast Notification Container -->
-<div id="authme-toaster-container" class="authme-toaster-container"></div>
+<!-- AuthMe Toast Notification -->
+<div id="authme-toaster" class="authme-toaster" style="display: none;">
+    <span class="authme-toaster-message" id="authme-toaster-message"></span>
+    <button class="authme-toaster-close" id="authme-toaster-close" aria-label="Close">&times;</button>
+</div>

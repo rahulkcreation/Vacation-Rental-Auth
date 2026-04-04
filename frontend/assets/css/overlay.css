@@ -3,8 +3,7 @@
  * ============================================
  *
  * Positioning, backdrop, and overlay container.
- * Uses position:fixed + z-index:1000 so the form
- * floats above ALL page content as a modal popup.
+ * All colors from global.css variables only.
  *
  * @package AuthMe
  * ============================================ */
@@ -21,7 +20,7 @@ body.authme-body-locked {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--authme-backdrop);
+    background-color: var(--authme-overlay-bg);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     z-index: 1000;
@@ -44,10 +43,10 @@ body.authme-body-locked {
     max-width: 420px;
     max-height: 90vh;
     overflow-y: auto;
-    background-color: var(--authme-card-bg);
-    border-radius: var(--authme-radius-lg);
+    background-color: var(--authme-white);
+    border-radius: 20px;
     padding: 40px;
-    box-shadow: var(--authme-shadow-lg);
+    box-shadow: var(--authme-card-shadow);
     transform: translateY(20px) scale(0.97);
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
                 opacity 0.35s ease;
@@ -69,7 +68,7 @@ body.authme-body-locked {
 }
 
 .authme-overlay-container::-webkit-scrollbar-thumb {
-    background: var(--authme-border);
+    background: var(--authme-border-default);
     border-radius: 4px;
 }
 
@@ -81,11 +80,11 @@ body.authme-body-locked {
     width: 30px !important;
     height: 30px !important;
     display: flex !important;
-    background: var(--authme-bg, #f8fafc) !important;
-    border: 1px solid var(--authme-border, #e2e8f0) !important;
+    background: var(--authme-bg) !important;
+    border: 1px solid var(--authme-border-default) !important;
     border-radius: 50% !important;
     cursor: pointer !important;
-    color: var(--authme-text-muted, #64748b) !important;
+    color: var(--authme-grey-light-text) !important;
     z-index: 10;
     margin: 0;
     appearance: none;
@@ -104,9 +103,9 @@ body.authme-body-locked {
 }
 
 .authme-overlay-close:hover {
-    background: var(--authme-error-bg, #fef2f2) !important;
-    color: var(--authme-error, #dc2626) !important;
-    border-color: var(--authme-error, #dc2626) !important;
+    background: var(--authme-light-red-bg) !important;
+    color: var(--authme-error) !important;
+    border-color: var(--authme-error) !important;
 }
 
 /* ── Screen Switching ────────────────────── */
@@ -134,7 +133,7 @@ body.authme-body-locked {
 .authme-form-title {
     font-size: 24px;
     font-weight: 700;
-    color: var(--authme-text-main);
+    color: var(--authme-text);
     letter-spacing: -0.5px;
     text-align: center;
     margin-bottom: 8px;
@@ -142,7 +141,7 @@ body.authme-body-locked {
 
 .authme-form-subtitle {
     font-size: 14px;
-    color: var(--authme-text-muted);
+    color: var(--authme-grey-light-text);
     text-align: center;
     margin-bottom: 32px;
     line-height: 1.5;
@@ -153,7 +152,7 @@ body.authme-body-locked {
     text-align: center;
     margin-top: 24px;
     font-size: 14px;
-    color: var(--authme-text-muted);
+    color: var(--authme-grey-light-text);
 }
 
 .authme-link {
@@ -166,18 +165,18 @@ body.authme-body-locked {
 }
 
 .authme-link:hover {
-    color: var(--authme-primary-hover);
+    color: var(--authme-primary);
     text-decoration: underline;
 }
 
 .authme-link-disabled {
-    color: var(--authme-text-placeholder) !important;
+    color: var(--authme-grey-light-text) !important;
     cursor: not-allowed !important;
     text-decoration: none !important;
 }
 
 .authme-link-disabled:hover {
-    color: var(--authme-text-placeholder) !important;
+    color: var(--authme-grey-light-text) !important;
     text-decoration: none !important;
 }
 

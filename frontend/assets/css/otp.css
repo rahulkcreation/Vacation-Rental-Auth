@@ -3,7 +3,7 @@
  * ============================================
  *
  * Scoped to #authme-otp-screen to prevent
- * style conflicts.
+ * style conflicts. All colors from global.css.
  *
  * @package AuthMe
  * ============================================ */
@@ -24,10 +24,10 @@
     font-size: 24px;
     font-weight: 700;
     font-family: var(--authme-font);
-    border: 1.5px solid var(--authme-border);
+    border: 1.5px solid var(--authme-border-default);
     border-radius: 12px;
-    background-color: var(--authme-input-bg);
-    color: var(--authme-text-main);
+    background-color: var(--authme-white);
+    color: var(--authme-text);
     transition: all 0.2s ease;
     padding: 0;
     outline: none;
@@ -35,14 +35,14 @@
 
 #authme-otp-screen .authme-otp-box:focus {
     border-color: var(--authme-primary);
-    box-shadow: 0 0 0 4px var(--authme-primary-ring);
+    box-shadow: 0 0 0 4px var(--authme-light-red-bg);
     background-color: var(--authme-white);
 }
 
 /* Filled box highlight */
 #authme-otp-screen .authme-otp-box.authme-otp-filled {
     border-color: var(--authme-primary);
-    background-color: var(--authme-info-bg);
+    background-color: var(--authme-bg);
 }
 
 /* ── Button ──────────────────────────────── */
@@ -52,7 +52,7 @@
     background-color: var(--authme-primary);
     color: var(--authme-white);
     border: none;
-    border-radius: var(--authme-radius-md);
+    border-radius: 10px;
     font-size: 15px;
     font-weight: 600;
     font-family: var(--authme-font);
@@ -62,9 +62,9 @@
 }
 
 #authme-otp-screen .authme-btn-primary:hover:not(:disabled) {
-    background-color: var(--authme-primary-hover);
+    opacity: 0.9;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px var(--authme-primary-shadow);
+    box-shadow: var(--authme-card-shadow);
 }
 
 #authme-otp-screen .authme-btn-primary:active:not(:disabled) {

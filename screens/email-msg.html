@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification Email</title>
+    <style>
+        /* User Provided Colors */
+        :root {
+            --am-d-primary: #F15E74;
+            --am-d-secondary: #2C3E50;
+            --am-d-accent: #2563eb;
+            --am-d-bg: #FAFAFA;
+            --am-d-text: #000000;
+            --am-d-success: #16a34a;
+            --am-d-warning: #f59e0b;
+            --am-d-error: #ea0124;
+            --am-d-white: #ffffff;
+            --am-d-card-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+            --am-d-border-light: #e9eef3;
+            --am-d-border-default: #e2e8f0;
+            --am-d-grey-light-text: #5a6e7c;
+            --am-d-light-yellow-bg: #fff2dc;
+            --am-d-light-red-bg: #ffe6ea;
+            --am-d-light-green-bg: #d5ffe5;
+        }
+
+        /* General Reset */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--am-d-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Layout Container */
+        .email-msg-wrapper {
+            width: 96%;
+            background-color: var(--am-d-bg);
+            margin: 20px auto;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Main Card */
+        .email-msg-card {
+            max-width: 500px;
+            width: 100%;
+            background-color: var(--am-d-white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--am-d-card-shadow);
+        }
+
+        /* Header Section */
+        .email-msg-header {
+            background-color: var(--am-d-primary);
+            padding: 28px 20px;
+            text-align: center;
+        }
+
+        .email-msg-header h2 {
+            margin: 0;
+            color: var(--am-d-white);
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Body Section */
+        .email-msg-body {
+            padding: 30px 14px;
+            text-align: center;
+        }
+
+        .email-msg-title {
+            margin: 0 0 16px;
+            color: var(--am-d-text);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .email-msg-desc {
+            margin: 0 0 32px;
+            color: var(--am-d-grey-light-text);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .email-msg-desc strong {
+            color: var(--am-d-grey-light-text);
+            font-weight: 700;
+        }
+
+        
+
+        .email-msg-note {
+            margin: 0;
+            color: var(--am-d-error);
+            font-size: 0.85rem;
+        }
+
+        /* Footer Section */
+        .email-msg-footer {
+            padding: 24px 32px;
+            background-color: var(--am-d-white);
+            border-top: 1px solid var(--am-d-border-light);
+            text-align: center;
+        }
+
+        .email-msg-footer p {
+            margin: 0;
+            color: var(--am-d-grey-light-text);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-msg-wrapper">
+        <div class="email-msg-card">
+            <!-- Header -->
+            <div class="email-msg-header">
+                <h2>COZY HOMESTAYS</h2>
+            </div>
+
+            <!-- Body Content -->
+            <div class="email-msg-body">
+                <h1 class="email-msg-title">Account password changed</h1>
+                <p class="email-msg-desc">
+                    Your account password is changed successfully. Now your requested password is saved to database, you can login with your new password.
+                </p>
+
+
+                <p class="email-msg-note">
+                    Note: If you did not changed your password then reset your password now or contact to admin on this email - (admin@gmail.com).
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="email-msg-footer">
+                <p>© 2026 COZY HOMESTAYS — Powered by AuthMe</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
