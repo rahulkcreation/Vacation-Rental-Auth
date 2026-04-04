@@ -81,10 +81,10 @@
         basicData.status = data.status; // Merge status from root object
         var dbId = data.raw_id;
 
-        // Names & Emails
+        // Names & Usernames
         var name = basicData.fullname || basicData.username || 'N/A';
         document.getElementById('amv-view-name').textContent = name;
-        document.getElementById('amv-view-email').textContent = basicData.email || 'N/A';
+        document.getElementById('amv-view-username').textContent = basicData.username ? '@' + basicData.username : 'N/A';
         
         // Initials Avatar
         var initial = name.charAt(0).toUpperCase();
@@ -92,6 +92,7 @@
 
         // Details
         document.getElementById('amv-view-id').textContent = dbId;
+        document.getElementById('amv-view-email-detail').textContent = basicData.email || 'N/A';
         document.getElementById('amv-view-phone').textContent = basicData.mobile || basicData.phone || 'N/A';
 
         // Documents
@@ -199,7 +200,7 @@
         formData.append('action', 'authme_admin_process_host');
         formData.append('nonce', authme_admin.nonce);
         formData.append('id', id);
-        formData.append('status', newStatus);
+        formData.append('new_status', newStatus);
 
         fetch(authme_admin.ajax_url, {
             method: 'POST',

@@ -97,11 +97,11 @@ class AuthMe_Email {
     public function send_host_approved_email( $to_email, $username, $password ) {
 
         $site_name = get_bloginfo( 'name' );
-        $subject   = 'Congratulations!! Your host id verified — ' . $site_name;
+        $subject   = 'Congratulations!! Your Host ID is Approved — ' . $site_name;
 
         ob_start();
         $authme_email_title    = 'Application Approved';
-        $authme_email_desc     = 'Congratulations, your host account is approved! Welcome to our website, Now you can list your property. Here are your securely generated login credentials:';
+        $authme_email_desc     = 'Congratulations, your host account is approved! Now you can list your property. Here are your securely generated login credentials:';
         $authme_host_username  = $username;
         $authme_host_password  = $password;
         $authme_email_note     = 'Note: This is system generated password. Please securely login and change this auto-generated password immediately!';

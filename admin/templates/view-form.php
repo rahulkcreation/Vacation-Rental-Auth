@@ -47,7 +47,7 @@ $host_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
                     </div>
                     <div class="amh-profile-info">
                         <h3 class="amh-profile-name" id="amv-view-name">Loading...</h3>
-                        <p class="amh-profile-username" id="amv-view-email">Loading...</p>
+                        <p class="amh-profile-username" id="amv-view-username">Loading...</p>
                     </div>
                 </div>
 
@@ -56,6 +56,11 @@ $host_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
                     <div class="amh-detail-row">
                         <span class="amh-detail-label">Application ID</span>
                         <span class="amh-detail-value" id="amv-view-id">--</span>
+                    </div>
+
+                    <div class="amh-detail-row">
+                        <span class="amh-detail-label">Email ID</span>
+                        <span class="amh-detail-value" id="amv-view-email-detail">--</span>
                     </div>
 
                     <div class="amh-detail-row">

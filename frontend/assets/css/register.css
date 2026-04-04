@@ -15,7 +15,6 @@
 
 #authme-register-screen .authme-input {
     width: 100%;
-    padding: 14px 16px;
     border: 1.5px solid var(--authme-border-default);
     border-radius: 10px;
     font-size: 15px;
@@ -243,7 +242,6 @@
     }
 
     #authme-register-screen .authme-input {
-        padding: 12px 14px;
         font-size: 14px;
     }
 
@@ -254,12 +252,10 @@
 
     /* Stack the country select above the mobile input on small screens */
     #authme-register-screen .authme-mobile-wrapper {
-        flex-direction: column;
         gap: 8px;
     }
 
     #authme-register-screen .authme-country-select {
-        width: 100%;
         min-width: unset;
         font-size: 14px;
         padding: 12px 10px;

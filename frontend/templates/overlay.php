@@ -29,19 +29,19 @@ if ( ! defined( 'ABSPATH' ) ) {
         </button>
 
         <!-- Login Screen -->
-        <?php include AUTHME_PLUGIN_DIR . 'templates/login.php'; ?>
+        <?php include AUTHME_PLUGIN_DIR . 'frontend/templates/login.php'; ?>
 
         <!-- Register Screen -->
-        <?php include AUTHME_PLUGIN_DIR . 'templates/register.php'; ?>
+        <?php include AUTHME_PLUGIN_DIR . 'frontend/templates/register.php'; ?>
 
         <!-- OTP Verification Screen (shared for login, registration, password reset) -->
-        <?php include AUTHME_PLUGIN_DIR . 'templates/otp.php'; ?>
+        <?php include AUTHME_PLUGIN_DIR . 'frontend/templates/otp.php'; ?>
 
         <!-- Forgot Password Screen -->
-        <?php include AUTHME_PLUGIN_DIR . 'templates/forgot-password.php'; ?>
+        <?php include AUTHME_PLUGIN_DIR . 'frontend/templates/forgot-password.php'; ?>
 
         <!-- New Password Screen (shown after OTP verified on reset flow) -->
-        <?php include AUTHME_PLUGIN_DIR . 'templates/new-password.php'; ?>
+        <?php include AUTHME_PLUGIN_DIR . 'frontend/templates/new-password.php'; ?>
 
     </div>
 
