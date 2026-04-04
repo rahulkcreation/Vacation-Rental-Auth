@@ -12,6 +12,7 @@
 .am-d-container {
     max-width: 100%;
     margin: 20px 20px 20px 0;
+    font-family: var(--authme-font);
 }
 
 /* Header Styles */
@@ -161,7 +162,7 @@
     color: var(--authme-secondary);
     padding: 4px 8px;
     border-radius: 6px;
-    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-family: var(--authme-font);
     font-size: 12px;
     font-weight: 500;
     word-break: break-all;

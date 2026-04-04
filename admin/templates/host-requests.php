@@ -1,131 +1,152 @@
-<div class="wrap authme-host-wrapper">
-    <h1 class="wp-heading-inline h-main-s-heading">Host Applications</h1>
-    <hr class="wp-header-end">
+<?php
+/**
+ * AuthMe Admin — Host Requests Page
+ *
+ * @package AuthMe
+ */
 
-    <main class="main-content" id="authme-host-main-view">
-        <!-- Search -->
-        <div class="search-wrapper">
-            <span class="search-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+?>
+
+<div class="amh-main-container" id="amh-dashboard-container">
+    <div class="amh-header-section">
+        <div class="amh-header-top">
+            <div class="amh-header-left">
+                <div class="amh-header-icon-box">
+                    <svg class="amh-header-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <div class="amh-header-text-group">
+                    <h1 class="amh-page-title">Host Applications</h1>
+                    <p class="amh-page-subtitle">Manage and review incoming host applications</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="amh-stats-row" id="amh-stats-container">
+            <div class="amh-stat-card amh-stat-pending amh-stat-active" data-amh-stat-tab="pending" onclick="amhSwitchTab('pending', this)">
+                <div class="amh-stat-icon-wrap amh-stat-icon-pending">
+                    <svg class="amh-stat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <div class="amh-stat-info">
+                    <span class="amh-stat-label">Pending</span>
+                    <span class="amh-stat-value" id="amh-stat-pending-count">-</span>
+                </div>
+            </div>
+            
+            <div class="amh-stat-card amh-stat-approved" data-amh-stat-tab="approved" onclick="amhSwitchTab('approved', this)">
+                <div class="amh-stat-icon-wrap amh-stat-icon-approved">
+                    <svg class="amh-stat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+                <div class="amh-stat-info">
+                    <span class="amh-stat-label">Approved</span>
+                    <span class="amh-stat-value" id="amh-stat-approved-count">-</span>
+                </div>
+            </div>
+            
+            <div class="amh-stat-card amh-stat-rejected" data-amh-stat-tab="rejected" onclick="amhSwitchTab('rejected', this)">
+                <div class="amh-stat-icon-wrap amh-stat-icon-rejected">
+                    <svg class="amh-stat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                </div>
+                <div class="amh-stat-info">
+                    <span class="amh-stat-label">Rejected</span>
+                    <span class="amh-stat-value" id="amh-stat-rejected-count">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="amh-search-section">
+        <div class="amh-search-bar-wrapper" id="amh-search-bar-wrapper">
+            <span class="amh-search-icon">
+                <svg class="amh-search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
             </span>
-            <input type="text" class="search-input" id="authmeSearchInput" placeholder="Search by name, email, or phone (min 3 chars)...">
+            <input type="text" class="amh-search-input" placeholder="Search by name, email, or phone (min 3 chars)..." id="amh-search-input" autocomplete="off">
+            <button class="amh-search-clear-btn" id="amh-search-clear-btn" onclick="amhClearSearch()" aria-label="Clear Search">
+                <svg class="amh-search-clear-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="amh-table-section">
+        <div class="amh-table-header-bar">
+            <div class="amh-table-title-group">
+                <span class="amh-table-section-title" id="amh-table-section-title">Pending Applications</span>
+                <span class="amh-table-section-subtitle" id="amh-table-section-subtitle">Showing applications awaiting review</span>
+            </div>
+            <div class="amh-table-actions-group">
+                <button class="amh-filter-btn" onclick="amhExecuteRefresh()">
+                    <svg class="amh-filter-btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="tabs-container">
-            <button class="tab-btn active" id="btn-pending" data-status="pending">Pending <span id="count-pending">(0)</span></button>
-            <button class="tab-btn" id="btn-approved" data-status="approved">Approved <span id="count-approved">(0)</span></button>
-            <button class="tab-btn" id="btn-rejected" data-status="rejected">Rejected <span id="count-rejected">(0)</span></button>
-        </div>
-
-        <!-- Mobile List View -->
-        <div class="requests-list" id="requestsList">
-            <!-- Populated via JS -->
-        </div>
-
-        <!-- Web Table View -->
-        <div class="desktop-table-view">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Applicant Info</th>
-                        <th>Status</th>
-                        <th>Date Submitted</th>
-                        <th>Actions</th>
+        <div class="amh-table-scroll">
+            <table class="amh-data-table">
+                <thead class="amh-table-header">
+                    <tr class="amh-table-header-row">
+                        <th class="amh-table-header-cell amh-col-id">ID</th>
+                        <th class="amh-table-header-cell amh-col-applicant">Applicant Info</th>
+                        <th class="amh-table-header-cell amh-col-status">Status</th>
+                        <th class="amh-table-header-cell amh-col-date">Date Submitted</th>
+                        <th class="amh-table-header-cell amh-col-actions">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody">
-                    <!-- Populated via JS -->
+                <tbody class="amh-table-body" id="amh-table-body-container">
+                    <!-- Dynamic Rows populated by JS -->
                 </tbody>
             </table>
-            
-            <div class="pagination-footer">
-                <span class="overview-label" id="pageInfo">Showing 0 entries</span>
-                <div class="page-btns" id="paginationBtns">
-                    <!-- Pagination JS -->
-                </div>
+
+            <div class="amh-table-mobile" id="amh-mobile-body-container">
+                <!-- Mobile Cards populated by JS -->
             </div>
         </div>
-    </main>
 
-    <!-- Detailed Form View (Hidden by Default) -->
-    <main class="main-container" id="authme-view-form">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-left">
-                <button class="btn-back" id="btnBackToMain">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
+        <!-- Pagination -->
+        <div class="amh-pagination-bar">
+            <span class="amh-pagination-text" id="amh-pagination-text">Showing 0-0 of 0</span>
+            <div class="amh-pagination-controls" id="amh-pagination-controls">
+                <button class="amh-page-btn amh-page-btn-disabled" disabled id="amh-btn-prev">
+                    <svg class="amh-page-btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                 </button>
-                <h1 class="page-title">Application Review</h1>
-            </div>
-            <span class="app-id" id="view-app-id">ID: </span>
-        </header>
-
-        <!-- Profile Card -->
-        <section class="profile-card">
-            <div class="profile-header">
-                <div class="avatar" id="view-avatar">?</div>
-                <div>
-                    <h2 class="profile-name" id="view-name">Loading...</h2>
-                    <p class="profile-handle" id="view-username">@loading</p>
+                <div id="amh-page-numbers">
+                    <button class="amh-page-btn amh-page-btn-active">1</button>
                 </div>
-            </div>
-            <div class="contact-details">
-                <div class="contact-row dashed-border">
-                    <span class="contact-label">Email</span>
-                    <span class="contact-value" id="view-email">-</span>
-                </div>
-                <div class="contact-row">
-                    <span class="contact-label">Phone</span>
-                    <span class="contact-value" id="view-phone">-</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Documents Section -->
-        <section class="section-mb">
-            <h3 class="section-title">Uploaded Documents</h3>
-            <div class="doc-list" id="view-doc-list">
-                <!-- Dynamically injected -->
-            </div>
-        </section>
-
-        <!-- Status Section -->
-        <section class="section-mb">
-            <h3 class="section-title">Application Status</h3>
-            <div class="status-wrapper">
-                <button class="status-btn" id="statusDropdownBtn">
-                    <div class="status-info">
-                        <div class="status-dot" id="view-status-dot"></div>
-                        <span class="status-text" id="view-status-text">Pending</span>
-                    </div>
+                <button class="amh-page-btn amh-page-btn-disabled" disabled id="amh-btn-next">
+                    <svg class="amh-page-btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                 </button>
-                <div id="statusDropdownMenu" class="status-dropdown-menu">
-                    <div class="status-option" data-val="pending">Pending</div>
-                    <div class="status-option" data-val="approved">Approve</div>
-                    <div class="status-option" data-val="rejected">Reject</div>
-                </div>
             </div>
-        </section>
-
-        <button class="btn-submit" id="btnSubmitReview">
-            <span>Update Status</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-        </button>
-    </main>
-
-    <!-- Document Image Modal -->
-    <div id="docViewerModal" class="doc-viewer-backdrop">
-        <div class="doc-viewer-content">
-            <button id="docViewerClose">&times;</button>
-            <img id="docViewerImg" src="" alt="Document Preview">
         </div>
     </div>
 </div>

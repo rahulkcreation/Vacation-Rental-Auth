@@ -13,7 +13,7 @@
 #am-dashboard {
     max-width: 100%;
     margin: 20px 20px 20px 0;
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+    font-family: var(--authme-font);
     color: var(--authme-text);
     line-height: 1.5;
 }
@@ -215,7 +215,7 @@
     background: var(--authme-bg);
     padding: 0.85rem 1rem;
     border-radius: 0.75rem;
-    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-family: var(--authme-font);
     font-size: 0.85rem;
     overflow-x: auto;
     white-space: pre-wrap;
@@ -230,7 +230,7 @@
 }
 
 #am-dashboard .am-code-text {
-    font-family: monospace;
+    font-family: var(--authme-font);
     font-size: 0.85rem;
     color: var(--authme-secondary);
 }
@@ -239,7 +239,7 @@
     background: var(--authme-border-light);
     padding: 0.2rem 0.4rem;
     border-radius: 0.4rem;
-    font-family: monospace;
+    font-family: var(--authme-font);
     font-size: 0.85rem;
 }
 

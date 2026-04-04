@@ -8,7 +8,14 @@
  * @package AuthMe
  * ============================================ */
 
- :root {
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
+
+
+:root {
+            /* Typography */
+            --authme-font: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
             /* Primary colors */
             --authme-primary: #F15E74;
             --authme-secondary: #2C3E50;
@@ -33,3 +40,20 @@
             --authme-light-red-bg: #ffe6ea;
             --authme-light-green-bg: #d5ffe5;
         }
+
+/* ============================================
+ * Global UI Overrides
+ * ============================================ */
+
+/* Remove default browser/WordPress outline and focus shadow centrally */
+*:focus,
+*:focus-visible,
+*:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Reset WordPress default paragraph margin */
+p {
+    margin: 0;
+}

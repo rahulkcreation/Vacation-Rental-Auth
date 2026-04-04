@@ -1,353 +1,399 @@
-(function($) {
-    "use strict";
+/**
+ * AuthMe Admin — Host Requests Javascript
+ *
+ * Handles fetching host requests via AJAX and dynamically 
+ * updating the UI according to the modern design.
+ *
+ * @package AuthMe
+ */
 
-    var appState = {
-        data: [],
-        filter: 'pending', // default tab
-        search: '',
+(function () {
+    'use strict';
+
+    /* ── Global State ──────────────────────── */
+    var amhState = {
+        tab: 'pending',
         page: 1,
-        pages: 1,
-        currentViewId: 0,
-        currentViewRawId: 0
+        searchQuery: '',
+        data: [] // Latest current data response
     };
 
-    var debounceTimer;
+    var amhTabTitles = {
+        pending: "Pending Applications",
+        approved: "Approved Applications",
+        rejected: "Rejected Applications"
+    };
 
-    $(document).ready(function() {
-        if ($('#authme-host-main-view').length === 0) return;
+    var amhTabSubtitles = {
+        pending: "Showing applications awaiting review",
+        approved: "Showing approved host applications",
+        rejected: "Showing rejected host applications"
+    };
 
-        bindEvents();
-        fetchRequests();
-    });
+    /* ── Fetching Data ─────────────────────── */
 
-    function bindEvents() {
-        // Tabs
-        $('.tab-btn').on('click', function() {
-            var status = $(this).data('status');
-            $('.tab-btn').removeClass('active');
-            $(this).addClass('active');
-            appState.filter = status;
-            appState.page = 1;
-            fetchRequests();
-        });
+    /**
+     * Fetch host requests from the backend.
+     */
+    window.amhFetchData = function() {
+        var tableBody = document.getElementById('amh-table-body-container');
+        var mobileBody = document.getElementById('amh-mobile-body-container');
+        
+        if (tableBody) tableBody.innerHTML = '<tr><td colspan="5" class="amh-empty-state">Loading...</td></tr>';
+        if (mobileBody) mobileBody.innerHTML = '<div class="amh-empty-state">Loading...</div>';
 
-        // Search (Debounce + min 3 chars)
-        $('#authmeSearchInput').on('input', function() {
-            var val = $(this).val().trim();
-            
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(function() {
-                if (val.length >= 3 || val.length === 0) {
-                    appState.search = val;
-                    appState.page = 1;
-                    fetchRequests();
+        var formData = new FormData();
+        formData.append('action', 'authme_admin_get_host_requests');
+        formData.append('nonce', authme_admin.nonce);
+        formData.append('paged', amhState.page);
+        formData.append('status', amhState.tab);
+
+        // Note: The backend search currently might not be fully functional for `email` vs `fullname` search natively across JSON
+        // However, if the backend supports `search`, we can append it. 
+        // For now we will fetch the tab data and perform a frontend filter if searchQuery is active to match the HTML design logic.
+        
+        fetch(authme_admin.ajax_url, {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin',
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(result) {
+            if (result.success) {
+                amhState.data = result.data.items || [];
+                amhUpdateCounts(result.data.counts);
+                
+                // If search is active, filter locally just like the HTML mockup
+                var displayData = amhState.data;
+                if (amhState.searchQuery.length >= 3) {
+                    var s = amhState.searchQuery.toLowerCase();
+                    displayData = displayData.filter(function(item) {
+                        var e = (item.email || '').toLowerCase();
+                        var p = (item.phone || '').toLowerCase();
+                        var n = (item.fullname || '').toLowerCase();
+                        return e.indexOf(s) > -1 || p.indexOf(s) > -1 || n.indexOf(s) > -1;
+                    });
                 }
-            }, 500);
-        });
 
-        // Delegate View Forms click
-        $(document).on('click', '.btn-view-forms', function() {
-            var id = $(this).data('id');
-            openViewForm(id);
-        });
-
-        // Back btn
-        $('#btnBackToMain').on('click', function() {
-            $('#authme-view-form').hide();
-            $('#authme-host-main-view').fadeIn();
-        });
-
-        // Dropdown toggle
-        $('#statusDropdownBtn').on('click', function() {
-            // Only toggle if not disabled
-            if (!$(this).prop('disabled')) {
-                $('#statusDropdownMenu').slideToggle(150);
-            }
-        });
-
-        // Dropdown option select
-        $('.status-option').on('click', function() {
-            var val = $(this).data('val');
-            var text = $(this).text();
-            
-            appState.newStatus = val;
-            $('#view-status-text').text(text);
-            
-            $('#view-status-dot').css('background-color', 
-                val === 'approved' ? 'var(--authme-admin-success)' : 
-                val === 'rejected' ? 'var(--authme-admin-error)' : 
-                'var(--authme-admin-warning)'
-            );
-            
-            $('#statusDropdownMenu').hide();
-        });
-
-        // Submit Status
-        $('#btnSubmitReview').on('click', submitReview);
-
-        // Doc Viewer
-        $('#docViewerClose').on('click', function() {
-            $('#docViewerModal').fadeOut();
-        });
-        
-        // Delegate doc item click
-        $(document).on('click', '.doc-item', function() {
-            var b64 = $(this).data('b64');
-            if (b64) {
-                $('#docViewerImg').attr('src', b64);
-                $('#docViewerModal').fadeIn().css('display', 'flex');
-            }
-        });
-    }
-
-    function fetchRequests() {
-        var data = {
-            action: 'authme_admin_get_host_requests',
-            nonce: authme_admin.nonce,
-            status: appState.filter,
-            search: appState.search,
-            page: appState.page
-        };
-
-        $('#requestsList').html('<div style="text-align:center; padding: 2rem; color: var(--authme-admin-text-muted);">Loading...</div>');
-        $('#tableBody').html('<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--authme-admin-text-muted);">Loading...</td></tr>');
-
-        $.post(authme_admin.ajax_url, data, function(res) {
-            if (res.success) {
-                renderUI(res.data);
+                amhRenderTableRows(displayData);
+                amhUpdatePagination(displayData.length, result.data.total, result.data.pages);
             } else {
-                alert('Error fetching data: ' + res.data.message);
+                amhRenderError("Failed to fetch data.");
             }
+        })
+        .catch(function(e) {
+            console.error(e);
+            amhRenderError("Network error.");
         });
+    };
+
+    function amhUpdateCounts(counts) {
+        if (!counts) return;
+        var p = document.getElementById('amh-stat-pending-count');
+        var a = document.getElementById('amh-stat-approved-count');
+        var r = document.getElementById('amh-stat-rejected-count');
+        
+        if (p) p.textContent = counts.pending || 0;
+        if (a) a.textContent = counts.approved || 0;
+        if (r) r.textContent = counts.rejected || 0;
     }
 
-    function renderUI(data) {
-        var items = data.items;
-        appState.pages = data.pages;
+    function amhRenderError(msg) {
+        var tableBody = document.getElementById('amh-table-body-container');
+        var mobileBody = document.getElementById('amh-mobile-body-container');
         
-        // Update Headers
-        $('#count-pending').text('(' + data.counts.pending + ')');
-        $('#count-approved').text('(' + data.counts.approved + ')');
-        $('#count-rejected').text('(' + data.counts.rejected + ')');
-        
-        var listHTML = '';
-        var tableHTML = '';
-
-        if (items.length === 0) {
-            listHTML = '<div style="text-align:center; padding: 2rem; color: var(--authme-admin-text-muted);">No results found.</div>';
-            tableHTML = '<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--authme-admin-text-muted);">No results found.</td></tr>';
-        } else {
-            items.forEach(function(item) {
-                // Mobile Card
-                listHTML += `
-                    <div class="request-card">
-                        <div class="card-row">
-                            <span class="label-sm">ID</span>
-                            <span class="value-id">${item.id}</span>
-                        </div>
-                        <div class="card-row-app">
-                            <span class="label-sm">Applicant Info</span>
-                            <div class="applicant-details">
-                                <span class="email">${item.email}</span>
-                                <span class="phone">${item.phone}</span>
-                            </div>
-                        </div>
-                        <div class="card-row">
-                            <span class="label-sm">Status</span>
-                            <span class="status-badge status-${item.status}">${item.status}</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="label-sm">Date</span>
-                            <span class="date-value">${item.date}</span>
-                        </div>
-                        <button class="view-forms-btn btn-view-forms" data-id="${item.raw_id}">View Forms</button>
-                    </div>`;
-
-                // Desktop Table
-                tableHTML += `
-                    <tr>
-                        <td><span class="value-id">${item.id}</span></td>
-                        <td>
-                            <div style="font-size:0.95rem; font-weight:700; color:#1e293b; margin-bottom:2px;">${item.email}</div>
-                            <div style="font-size:0.85rem; color:#64748b;">${item.phone}</div>
-                        </td>
-                        <td><span class="status-badge status-${item.status}">${item.status}</span></td>
-                        <td style="color:#64748b; font-size:0.85rem; font-weight:500;">${item.date}</td>
-                        <td><button class="btn-table-view btn-view-forms" data-id="${item.raw_id}">View Forms</button></td>
-                    </tr>`;
-            });
-        }
-
-        $('#requestsList').html(listHTML);
-        $('#tableBody').html(tableHTML);
-
-        // Pagination
-        renderPagination(data.total);
+        if (tableBody) tableBody.innerHTML = '<tr><td colspan="5" class="amh-empty-state amh-error-state">' + msg + '</td></tr>';
+        if (mobileBody) mobileBody.innerHTML = '<div class="amh-empty-state amh-error-state">' + msg + '</div>';
     }
 
-    function renderPagination(totalItems) {
-        var start = (appState.page - 1) * 10 + 1;
-        var end = Math.min(start + 9, totalItems);
-        if (totalItems === 0) { start = 0; end = 0; }
+    /* ── UI Rendering ──────────────────────── */
+
+    function amhRenderTableRows(data) {
+        var tableBody = document.getElementById('amh-table-body-container');
+        var mobileBody = document.getElementById('amh-mobile-body-container');
         
-        $('#pageInfo').text('Showing ' + start + '-' + end + ' of ' + totalItems);
+        if (!tableBody || !mobileBody) return;
 
-        var paginationHTML = '';
-        if (appState.pages > 1) {
-            paginationHTML += `<button class="p-btn p-prev" ${appState.page === 1 ? 'disabled' : ''}>Prev</button>`;
-            
-            for (var i = 1; i <= appState.pages; i++) {
-                if (i === 1 || i === appState.pages || (i >= appState.page - 1 && i <= appState.page + 1)) {
-                    var activeClass = i === appState.page ? 'active' : '';
-                    paginationHTML += `<button class="p-btn p-num ${activeClass}" data-page="${i}">${i}</button>`;
-                } else if (i === appState.page - 2 || i === appState.page + 2) {
-                    paginationHTML += `<span style="padding:0 5px;">...</span>`;
-                }
-            }
+        tableBody.innerHTML = '';
+        mobileBody.innerHTML = '';
 
-            paginationHTML += `<button class="p-btn p-next" ${appState.page === appState.pages ? 'disabled' : ''}>Next</button>`;
-        }
-
-        $('#paginationBtns').html(paginationHTML);
-
-        // Bind Pagination
-        $('.p-num').on('click', function() {
-            var p = $(this).data('page');
-            appState.page = p;
-            fetchRequests();
-        });
-        $('.p-prev').on('click', function() {
-            if (appState.page > 1) { appState.page--; fetchRequests(); }
-        });
-        $('.p-next').on('click', function() {
-            if (appState.page < appState.pages) { appState.page++; fetchRequests(); }
-        });
-    }
-
-    function openViewForm(raw_id) {
-        appState.currentViewRawId = raw_id;
-
-        // Fetch single row
-        var data = {
-            action: 'authme_admin_get_single_host',
-            nonce: authme_admin.nonce,
-            id: raw_id
-        };
-
-        $('#authme-host-main-view').hide();
-        $('#authme-view-form').fadeIn();
-        
-        // Loader states
-        $('#view-app-id').text('Loading...');
-        $('#view-name').text('Loading...');
-
-        $.post(authme_admin.ajax_url, data, function(res) {
-            if (res.success) {
-                populateViewForm(res.data);
-            } else {
-                alert('Fetch failed: ' + res.data.message);
-                $('#btnBackToMain').trigger('click');
-            }
-        });
-    }
-
-    function populateViewForm(data) {
-        var ud = data.userData;
-        
-        $('#view-app-id').text('ID: ' + data.id);
-        $('#view-name').text(ud.fullname || 'Unknown');
-        $('#view-username').text('@' + (ud.username || ''));
-        $('#view-avatar').text(ud.fullname ? ud.fullname.substring(0,2) : '??');
-        $('#view-email').text(ud.email || '-');
-        $('#view-phone').text(ud.mobile || '-');
-
-        // Render Docs
-        var docHTML = '';
-        if (ud.documents) {
-            if (ud.documents.aadharf) docHTML += createDocHTML('Aadhar Front', ud.documents.aadharf);
-            if (ud.documents.aadharb) docHTML += createDocHTML('Aadhar Back', ud.documents.aadharb);
-            if (ud.documents.pan) docHTML += createDocHTML('PAN Card', ud.documents.pan);
-        }
-        $('#view-doc-list').html(docHTML);
-
-        // Status Binding
-        appState.newStatus = data.status;
-        var sBtn = $('#statusDropdownBtn');
-        var sTxt = $('#view-status-text');
-        var sDot = $('#view-status-dot');
-
-        if (data.status === 'pending') {
-            sBtn.prop('disabled', false);
-            sTxt.text('Pending');
-            sDot.css('background-color', 'var(--authme-admin-warning)');
-            $('#btnSubmitReview').show();
-        } else if (data.status === 'approved') {
-            sBtn.prop('disabled', true);
-            sTxt.text('Approved');
-            sDot.css('background-color', 'var(--authme-admin-success)');
-            $('#btnSubmitReview').hide();
-        } else {
-            sBtn.prop('disabled', true);
-            sTxt.text('Rejected');
-            sDot.css('background-color', 'var(--authme-admin-error)');
-            $('#btnSubmitReview').hide();
-        }
-    }
-
-    function createDocHTML(title, b64) {
-        return `
-        <div class="doc-item" data-b64="${b64}">
-            <div class="doc-info">
-                <div class="doc-icon-wrapper">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                </div>
-                <span class="doc-name">${title}</span>
-            </div>
-            <button class="btn-view">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            </button>
-        </div>`;
-    }
-
-    function submitReview() {
-        var btn = $('#btnSubmitReview');
-        var originalText = btn.html();
-        
-        if (appState.newStatus === 'pending') {
-            alert('Please select Approve or Reject to process this request.');
+        if (data.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5" class="amh-empty-state">No applications found.</td></tr>';
+            mobileBody.innerHTML = '<div class="amh-empty-state">No applications found.</div>';
             return;
         }
 
-        var confirmMsg = appState.newStatus === 'approved' 
-            ? "Are you sure you want to approve this request? An account will be created and an email sent."
-            : "Are you sure you want to reject this request? An email will be sent to the applicant.";
+        var amhStatusClass = '';
+        var amhDotClass    = '';
+        
+        if (amhState.tab === 'pending') {
+            amhStatusClass = 'amh-status-badge-pending';
+            amhDotClass = 'amh-status-dot-pending';
+        } else if (amhState.tab === 'approved') {
+            amhStatusClass = 'amh-status-badge-approved';
+            amhDotClass = 'amh-status-dot-approved';
+        } else if (amhState.tab === 'rejected') {
+            amhStatusClass = 'amh-status-badge-rejected';
+            amhDotClass = 'amh-status-dot-rejected';
+        }
+
+        data.forEach(function (app, index) {
+            var rawEmail = app.email || 'N/A';
+            var rawPhone = app.phone || 'N/A';
+            var statusLabel = amhState.tab.charAt(0).toUpperCase() + amhState.tab.slice(1);
             
-        if (!confirm(confirmMsg)) return;
+            // Build Desktop Row
+            var row = document.createElement('tr');
+            row.className = 'amh-table-body-row';
+            row.style.animationDelay = (index * 0.05) + 's';
+            row.innerHTML =
+                '<td class="amh-table-body-cell"><div class="amh-cell-id-wrap">' + app.id + '</div></td>' +
+                '<td class="amh-table-body-cell">' +
+                    '<div class="amh-applicant-info">' +
+                        '<span class="amh-applicant-email">' + rawEmail + '</span>' +
+                        '<span class="amh-applicant-phone">' +
+                            '<svg class="amh-phone-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>' + 
+                            rawPhone + 
+                        '</span>' +
+                    '</div>' +
+                '</td>' +
+                '<td class="amh-table-body-cell">' +
+                    '<span class="amh-status-badge ' + amhStatusClass + '">' +
+                        '<span class="amh-status-dot ' + amhDotClass + '"></span>' + statusLabel + 
+                    '</span>' +
+                '</td>' +
+                '<td class="amh-table-body-cell">' +
+                    '<span class="amh-date-cell">' +
+                        '<svg class="amh-date-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>' + 
+                        app.date + 
+                    '</span>' +
+                '</td>' +
+                '<td class="amh-table-body-cell amh-actions-cell">' +
+                    '<button class="amh-action-btn" onclick="amhViewForms(' + app.id + ')">' +
+                        '<svg class="amh-action-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>' +
+                        'View Forms' +
+                    '</button>' +
+                '</td>';
+            tableBody.appendChild(row);
 
-        btn.html('<span>Processing...</span>').prop('disabled', true).css('opacity', '0.8');
-
-        var data = {
-            action: 'authme_admin_process_host',
-            nonce: authme_admin.nonce,
-            id: appState.currentViewRawId,
-            new_status: appState.newStatus
-        };
-
-        $.post(authme_admin.ajax_url, data, function(res) {
-            btn.prop('disabled', false).css('opacity', '1');
-            
-            if (res.success) {
-                btn.html('<span>Action Successful</span>').css('background-color', 'var(--authme-admin-success)');
-                setTimeout(function() {
-                    btn.html(originalText).css('background-color', 'var(--authme-admin-primary)');
-                    $('#btnBackToMain').trigger('click');
-                    fetchRequests(); // Refresh list
-                }, 1500);
-            } else {
-                btn.html(originalText);
-                alert(res.data.message || 'Operation failed.');
-            }
+            // Build Mobile Card
+            var mCard = document.createElement('div');
+            mCard.className = 'amh-t-datas';
+            mCard.innerHTML = 
+                '<div class="amh-t-data-entry"><div class="data-label">ID</div><div class="data-entry">' + app.id + '</div></div>' +
+                '<div class="amh-t-data-entry"><div class="data-label">Email</div><div class="data-entry">' + rawEmail + '</div></div>' +
+                '<div class="amh-t-data-entry"><div class="data-label">Mobile Number</div><div class="data-entry">' + rawPhone + '</div></div>' +
+                '<div class="amh-t-data-entry"><div class="data-label">Date/Time</div><div class="data-entry">' + app.date + '</div></div>' +
+                '<div class="amh-t-data-entry amh-t-data-action">' +
+                    '<div class="data-status ' + amhState.tab + '">' + statusLabel + '</div>' +
+                    '<button class="data-btn" onclick="amhViewForms(' + app.id + ')">' +
+                        '<svg class="amh-action-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>' +
+                        'View' +
+                    '</button>' +
+                '</div>';
+            mobileBody.appendChild(mCard);
         });
     }
 
-})(jQuery);
+    function amhUpdatePagination(visibleCount, totalCount, totalPages) {
+        var paginationText = document.getElementById('amh-pagination-text');
+        
+        if (visibleCount > 0) {
+            var start = ((amhState.page - 1) * 10) + 1; // Assuming 10 items per page limit from backend map
+            var end = start + visibleCount - 1;
+            paginationText.textContent = "Showing " + start + "-" + end + " of " + (amhState.searchQuery.length >= 3 ? visibleCount + ' (filtered)' : totalCount);
+        } else {
+            paginationText.textContent = "No results found";
+        }
+
+        // Extremely simple pagination behavior update for mock visuals
+        var prevBtn = document.getElementById('amh-btn-prev');
+        var nextBtn = document.getElementById('amh-btn-next');
+        
+        if (prevBtn) {
+            if (amhState.page > 1) {
+                prevBtn.disabled = false;
+                prevBtn.classList.remove('amh-page-btn-disabled');
+            } else {
+                prevBtn.disabled = true;
+                prevBtn.classList.add('amh-page-btn-disabled');
+            }
+        }
+        
+        if (nextBtn) {
+            if (amhState.page < totalPages) {
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('amh-page-btn-disabled');
+            } else {
+                nextBtn.disabled = true;
+                nextBtn.classList.add('amh-page-btn-disabled');
+            }
+        }
+
+        // Just render current page block
+        var numbersBox = document.getElementById('amh-page-numbers');
+        if (numbersBox) {
+            numbersBox.innerHTML = '<button class="amh-page-btn amh-page-btn-active">' + amhState.page + '</button>';
+        }
+    }
+
+    /* ── Event Handlers & Exports ──────────── */
+
+    window.amhSwitchTab = function(tabName, clickedCard) {
+        amhState.tab = tabName;
+        amhState.page = 1;
+
+        var allStatCards = document.querySelectorAll('.amh-stat-card');
+        allStatCards.forEach(function (card) {
+            card.classList.remove('amh-stat-active');
+        });
+        if (clickedCard) {
+            clickedCard.classList.add('amh-stat-active');
+        }
+
+        var titleEl = document.getElementById('amh-table-section-title');
+        var subtitleEl = document.getElementById('amh-table-section-subtitle');
+        if (titleEl) titleEl.textContent = amhTabTitles[tabName] || 'Applications';
+        if (subtitleEl) subtitleEl.textContent = amhTabSubtitles[tabName] || '';
+
+        amhClearSearch(true); // Don't fetch yet, let the parent trigger fetch
+        amhFetchData();
+    };
+
+    window.amhClearSearch = function(skipFetch) {
+        var input = document.getElementById('amh-search-input');
+        if (input) input.value = '';
+        amhState.searchQuery = '';
+        amhUpdateSearchClearBtn();
+        amhUpdateSearchFocus();
+
+        if (!skipFetch) {
+            // Re-render local data without fetching if we already have it
+            if (amhState.data) {
+                amhRenderTableRows(amhState.data);
+                // Fake a pagination reset text for the local filtered data reset
+                var paginationText = document.getElementById('amh-pagination-text');
+                if (paginationText && amhState.data.length > 0) {
+                    var cnt = amhState.data.length;
+                    paginationText.textContent = "Showing 1-" + cnt + " of " + cnt; 
+                }
+            } else {
+                amhFetchData();
+            }
+            if (input) input.focus();
+        }
+    };
+
+    window.amhExecuteRefresh = function() {
+        amhClearSearch(true);
+        amhState.page = 1;
+        amhFetchData();
+        if (window.authmeShowToaster) {
+            window.authmeShowToaster('Refresh', 'Refreshed successfully');
+        }
+    };
+
+    window.amhViewForms = function(appId) {
+        // Here we hook into whatever functionality the dashboard relies on
+        // such as opening a modal to view the user's data. 
+        // We will mock this or provide basic feedback.
+        if (window.authmeShowToaster) {
+            window.authmeShowToaster('View Application', 'Loading details for Application #' + appId);
+        } else {
+            alert("Opening forms for application #" + appId);
+        }
+    };
+
+    function amhUpdateSearchClearBtn() {
+        var input = document.getElementById('amh-search-input');
+        var clearBtn = document.getElementById('amh-search-clear-btn');
+        if (!input || !clearBtn) return;
+        
+        if (input.value.length > 0) {
+            clearBtn.classList.add('amh-search-clear-visible');
+        } else {
+            clearBtn.classList.remove('amh-search-clear-visible');
+        }
+    }
+
+    function amhUpdateSearchFocus() {
+        var wrapper = document.getElementById('amh-search-bar-wrapper');
+        if (wrapper) wrapper.classList.remove('amh-search-focused');
+    }
+
+    /* ── Listeners ─────────────────────────── */
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!document.getElementById('amh-dashboard-container')) return;
+
+        amhFetchData(); // First load
+
+        var searchInput = document.getElementById('amh-search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', function (e) {
+                amhState.searchQuery = e.target.value.trim();
+                amhUpdateSearchClearBtn();
+
+                if (amhState.searchQuery.length === 0 || amhState.searchQuery.length >= 3) {
+                    // We trigger the local frontend filter rendering as built in backend data response
+                    var displayData = amhState.data;
+                    if (amhState.searchQuery.length >= 3) {
+                        var s = amhState.searchQuery.toLowerCase();
+                        displayData = displayData.filter(function(item) {
+                            var email = (item.email || '').toLowerCase();
+                            var phone = (item.phone || '').toLowerCase();
+                            var name  = (item.fullname || '').toLowerCase();
+                            return email.indexOf(s) > -1 || phone.indexOf(s) > -1 || name.indexOf(s) > -1;
+                        });
+                    }
+                    amhRenderTableRows(displayData);
+                    
+                    var paginationText = document.getElementById('amh-pagination-text');
+                    if (displayData.length > 0) {
+                        paginationText.textContent = "Showing filtering results (" + displayData.length + ")";
+                    } else {
+                        paginationText.textContent = "No results found";
+                    }
+                }
+            });
+
+            searchInput.addEventListener('focus', function () {
+                var wrapper = document.getElementById('amh-search-bar-wrapper');
+                if (wrapper) wrapper.classList.add('amh-search-focused');
+            });
+
+            searchInput.addEventListener('blur', function () {
+                amhUpdateSearchFocus();
+            });
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                amhClearSearch();
+            }
+        });
+
+        // Pagination hooks
+        var prevBtn = document.getElementById('amh-btn-prev');
+        var nextBtn = document.getElementById('amh-btn-next');
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function() {
+                if (amhState.page > 1) {
+                    amhState.page--;
+                    amhFetchData();
+                }
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function() {
+                if (!this.disabled) {
+                    amhState.page++;
+                    amhFetchData();
+                }
+            });
+        }
+    });
+
+})();

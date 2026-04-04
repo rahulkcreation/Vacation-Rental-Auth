@@ -11,7 +11,7 @@
 .authme-toaster {
     position: fixed;
     top: 20px;
-    right: 20px;
+    right: 10px;
     background-color: var(--authme-white);
     border: 1px solid var(--authme-border-default);
     border-left: 4px solid var(--authme-primary);
@@ -22,7 +22,15 @@
     max-width: 400px;
     z-index: 999999;
     animation: authmeSlideIn 0.3s ease-out;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--authme-font);
+}
+
+@media (width <= 400px) {
+    .authme-toaster {
+        right: 6px;
+        min-width: 200px;
+        max-width: 230px;
+    }
 }
 
 @keyframes authmeSlideIn {
@@ -30,6 +38,7 @@
         transform: translateX(100%);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -41,6 +50,7 @@
         transform: translateX(0);
         opacity: 1;
     }
+
     to {
         transform: translateX(100%);
         opacity: 0;
