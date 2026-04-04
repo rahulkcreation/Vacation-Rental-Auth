@@ -25,8 +25,10 @@
 
             /* Status colors */
             --authme-success: #16a34a;
+            --authme-success-hover: #15803d;
             --authme-warning: #f59e0b;
             --authme-error: #ea0124;
+            --authme-error-hover: #fca5a5;
 
             /* UI colors */
             --authme-white: #ffffff;

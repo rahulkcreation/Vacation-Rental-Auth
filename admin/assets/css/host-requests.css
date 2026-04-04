@@ -465,7 +465,7 @@
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 700;
-    text-transform: uppercase;
+    text-transform: capitalize;
     letter-spacing: 0.04em;
     white-space: nowrap;
 }
@@ -548,10 +548,13 @@
     transition: all 0.3s ease;
     font-family: inherit;
     white-space: nowrap;
+    text-decoration: none;
 }
 
 .amh-action-btn:hover {
     transform: translateY(-1px);
+    color: var(--authme-white);
+
 }
 
 .amh-action-btn-icon {
@@ -728,9 +731,205 @@
     border: none;
 }
 
-/* Responsiveness */
+/* ============================================
+ * Review Card Layout (View Forms UI)
+ * ============================================ */
+
+/* --- Content Container --- */
+.amh-view-content-container {
+    display: none; /* Hidden by default */
+    justify-content: center;
+    padding: 2rem 0;
+    flex: 1;
+}
+
+/* --- Main Card Layout --- */
+/* --- Card Header (Back, Title, ID) --- */
+.amh-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--authme-border-default);
+    padding-bottom: 1rem;
+}
+
+.amh-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.amh-btn-back {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--authme-secondary);
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.amh-btn-back:hover {
+    background-color: var(--authme-border-light);
+}
+
+.amh-card-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.amh-header-right {
+    display: flex;
+    align-items: center;
+}
+
+.amh-id-text {
+    font-size: 0.875rem;
+    color: var(--authme-grey-light-text);
+    font-weight: 500;
+}
+
+/* --- Profile Section --- */
+/* --- Contact Details Section --- */
+/* --- Document Section --- */
+.amh-doc-item:hover {
+    border-color: var(--authme-primary);
+}
+
+.amh-btn-view:hover {
+    color: var(--authme-primary);
+}
+
+/* --- Status Section --- */
+.amh-status-badge-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+
+
+/* --- Action Button Section --- */
+.amh-btn-update:hover {
+    transform: translateY(-2px);
+}
+
+.amh-btn-update:active {
+    transform: translateY(0);
+}
+
+.amh-btn-update.btn-approve { background-color: var(--authme-success); }
+.amh-btn-update.btn-reject { background-color: var(--authme-error); }
+
+/* --- SVG Icons Setup --- */
+.amh-icon {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+
+/* ============================================
+ * Responsive
+ * ============================================ */
+
 @media (max-width: 800px) {
     .amh-stats-row {
         grid-template-columns: repeat(1, 1fr);
     }
 }
+
+/* Tablet (768px) */
+@media (max-width: 768px) {
+    .amh-card-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+    .amh-header-left {
+        width: auto;
+    }
+
+    .amh-header-right {
+        padding-left: 0;
+    }
+
+    .amh-top-title {
+        font-size: 1.125rem;
+    }
+
+    .amh-card-title {
+        font-size: 1rem;
+    }
+
+    .amh-status-badge {
+        font-size: 0.8125rem;
+        padding: 0.375rem 0.875rem;
+    }
+
+    }
+
+/* Mobile (480px) */
+@media (max-width: 480px) {
+    .amh-top-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .amh-top-title {
+        font-size: 1rem;
+    }
+
+    .amh-view-content-container {
+        padding: 0;
+    }
+
+    .amh-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .amh-header-left {
+        width: 100%;
+    }
+
+    .amh-header-right {
+        padding-left: 2.5rem;
+        width: 100%;
+    }
+
+    .amh-btn-back {
+        padding: 0.375rem;
+    }
+
+    .amh-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .amh-card-title {
+        font-size: 0.9375rem;
+    }
+
+    .amh-status-badge {
+        font-size: 0.75rem;
+        padding: 0.3125rem 0.75rem;
+    }
+
+    .amh-btn-text {
+        font-size: 0.875rem;
+    }
+}
+
+/* Small Mobile (360px) */
+@media (max-width: 360px) {
+    }

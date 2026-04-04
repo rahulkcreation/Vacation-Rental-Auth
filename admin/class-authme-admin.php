@@ -86,6 +86,16 @@ class AuthMe_Admin {
             'authme-host-requests',             // Menu slug
             array( $this, 'render_host_requests' ) // Callback
         );
+
+        // Hidden Sub-menu: View Form
+        add_submenu_page(
+            null,                               // Parent slug null to hide it from menu
+            'View Form',                        // Page title
+            '',                                 // Menu title
+            'manage_options',                   // Capability
+            'authme-view-form',                 // Menu slug
+            array( $this, 'render_view_form' )  // Callback
+        );
     }
 
     /* ──────────────────────────────────────── */
@@ -114,30 +124,6 @@ class AuthMe_Admin {
             );
         }
 
-        if ( file_exists( $css_file ) ) {
-            wp_enqueue_style(
-                'authme-admin-css',
-                AUTHME_PLUGIN_URL . 'admin/assets/css/admin.css',
-                array( 'authme-admin-global-css' ),
-                filemtime( $css_file )
-            );
-        }
-
-        if ( file_exists( $js_file ) ) {
-            wp_enqueue_script(
-                'authme-admin-js',
-                AUTHME_PLUGIN_URL . 'admin/assets/js/admin.js',
-                array( 'jquery' ),
-                filemtime( $js_file ),
-                true
-            );
-
-            wp_localize_script( 'authme-admin-js', 'authme_admin', array(
-                'ajax_url' => admin_url( 'admin-ajax.php' ),
-                'nonce'    => wp_create_nonce( 'authme_admin_nonce' ),
-            ) );
-        }
-
         $toaster_css = AUTHME_PLUGIN_DIR . 'admin/assets/css/admin-toaster.css';
         $toaster_js  = AUTHME_PLUGIN_DIR . 'admin/assets/js/admin-toaster.js';
 
@@ -158,11 +144,16 @@ class AuthMe_Admin {
                 filemtime( $toaster_js ),
                 true
             );
+
+            wp_localize_script( 'authme-admin-toaster-js', 'authme_admin', array(
+                'ajax_url' => admin_url( 'admin-ajax.php' ),
+                'nonce'    => wp_create_nonce( 'authme_admin_nonce' ),
+            ) );
         }
 
         // Dynamically load page-specific CSS/JS if they exist (based on menu slug)
         // e.g., toplevel_page_authme -> dashboard, authme_page_authme-database -> database
-        $page_slug = str_replace( array('toplevel_page_authme', 'authme_page_authme-'), array('dashboard', ''), $hook );
+        $page_slug = str_replace( array('toplevel_page_authme', 'authme_page_authme-', 'admin_page_authme-'), array('dashboard', '', ''), $hook );
         if ( !empty($page_slug) && $page_slug !== $hook ) {
             $page_css_file = AUTHME_PLUGIN_DIR . 'admin/assets/css/' . $page_slug . '.css';
             $page_js_file  = AUTHME_PLUGIN_DIR . 'admin/assets/js/' . $page_slug . '.js';
@@ -179,7 +170,7 @@ class AuthMe_Admin {
                 wp_enqueue_script(
                     'authme-' . $page_slug . '-js',
                     AUTHME_PLUGIN_URL . 'admin/assets/js/' . $page_slug . '.js',
-                    array( 'jquery', 'authme-admin-js', 'authme-admin-toaster-js' ),
+                    array( 'jquery', 'authme-admin-toaster-js' ),
                     filemtime( $page_js_file ),
                     true
                 );
@@ -227,6 +218,13 @@ class AuthMe_Admin {
      */
     public function render_host_requests() {
         include AUTHME_PLUGIN_DIR . 'admin/templates/host-requests.php';
+    }
+
+    /**
+     * Render the View Form page.
+     */
+    public function render_view_form() {
+        include AUTHME_PLUGIN_DIR . 'admin/templates/view-form.php';
     }
 
     /* ──────────────────────────────────────── */

@@ -1,0 +1,362 @@
+/* ============================================
+ * AuthMe Admin — View Form CSS
+ * ============================================
+ * Decoupled from host requests to avoid CSS collisions.
+ * Requires global.css for colors.
+ * Prefix: .amv-
+ * ============================================ */
+
+/* --- Container & Wrap --- */
+.amv-view-content-container {
+    max-width: 800px;
+    margin: 30px auto;
+    font-family: var(--authme-font);
+}
+
+.amv-review-card {
+    background-color: var(--authme-white);
+    border-radius: 12px;
+    box-shadow: var(--authme-card-shadow);
+    padding: 2rem;
+}
+
+/* --- Header Section --- */
+.amv-card-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--authme-border-light);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.amv-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.amv-btn-back {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: var(--authme-secondary);
+    transition: transform 0.2s ease;
+}
+
+.amv-btn-back:hover {
+    transform: translateX(-4px);
+}
+
+.amv-icon-arrow {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.amv-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--authme-secondary);
+    margin: 0;
+}
+
+/* --- Profile Section --- */
+.amv-profile-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.amv-avatar-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--authme-light-red-bg);
+    color: var(--authme-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.amv-profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.amv-profile-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--authme-secondary);
+    margin: 0 0 0.25rem 0;
+    text-transform: capitalize;
+}
+
+.amv-profile-username {
+    font-size: 0.875rem;
+    color: var(--authme-grey-light-text);
+    margin: 0;
+}
+
+/* --- Details Section --- */
+.amv-details-section {
+    margin-bottom: 2rem;
+    border-bottom: 1px dashed var(--authme-border-light);
+    padding-bottom: 1rem;
+}
+
+.amv-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.amv-detail-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--authme-grey-light-text);
+}
+
+.amv-detail-value {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--authme-secondary);
+}
+
+/* --- Documents Section --- */
+.amv-docs-section {
+    margin-bottom: 2rem;
+}
+
+.amv-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--authme-secondary);
+    margin: 0 0 1rem 0;
+}
+
+.amv-doc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.amv-doc-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background-color: var(--authme-bg);
+    border: 1px solid var(--authme-border-light);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--authme-secondary);
+}
+
+.amv-doc-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.amv-icon-doc {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    color: var(--authme-grey-light-text);
+}
+
+.amv-btn-view {
+    background: none;
+    border: none;
+    color: var(--authme-accent);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+}
+
+.amv-btn-view:hover {
+    text-decoration: underline;
+}
+
+/* --- Status Section --- */
+.amv-status-section {
+    margin-bottom: 2rem;
+}
+
+/* Status Badges */
+.amv-status-badge {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: capitalize; /* Ensure nice capitalization, not ALL CAPS */
+    display: inline-block;
+}
+
+.amv-status-badge-pending {
+    background-color: var(--authme-light-yellow-bg);
+    color: var(--authme-warning);
+}
+
+.amv-status-badge-approved {
+    background-color: var(--authme-light-green-bg);
+    color: var(--authme-success);
+}
+
+.amv-status-badge-rejected {
+    background-color: var(--authme-light-red-bg);
+    color: var(--authme-error);
+}
+
+/* --- Action Section --- */
+.amv-action-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--authme-border-light);
+}
+
+.amv-btn-update {
+    flex: 1;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    font-family: inherit;
+}
+
+.amv-btn-approve {
+    background-color: var(--authme-success);
+    color: var(--authme-white);
+}
+
+.amv-btn-approve:hover {
+    background-color: var(--authme-success-hover);
+    transform: translateY(-1px);
+}
+
+.amv-btn-reject {
+    background-color: var(--authme-light-red-bg);
+    color: var(--authme-error);
+}
+
+.amv-btn-reject:hover {
+    background-color: var(--authme-error-hover);
+    transform: translateY(-1px);
+}
+
+.amv-btn-svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.amv-action-completed {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--authme-border-light);
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--authme-grey-light-text);
+}
+
+/* ============================================
+ * Responsive
+ * ============================================ */
+
+/* Tablet (768px) */
+@media (max-width: 768px) {
+    .amv-review-card {
+        padding: 1.5rem;
+        border-radius: 8px;
+    }
+
+    .amv-card-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+    .amv-header-left {
+        width: auto;
+    }
+
+    .amv-card-title {
+        font-size: 1rem;
+    }
+
+    .amv-avatar-circle {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+    }
+
+    .amv-profile-name {
+        font-size: 1rem;
+    }
+
+    .amv-profile-username {
+        font-size: 0.8125rem;
+    }
+
+    .amv-detail-label {
+        font-size: 0.8125rem;
+    }
+
+    .amv-detail-value {
+        font-size: 0.875rem;
+    }
+
+    .amv-section-title {
+        font-size: 0.9375rem;
+    }
+
+    .amv-doc-item {
+        padding: 0.625rem 0.875rem;
+    }
+
+    .amv-doc-name {
+        font-size: 0.8125rem;
+    }
+
+    .amv-btn-update {
+        font-size: 0.9375rem;
+        padding: 0.625rem 1.25rem;
+    }
+}

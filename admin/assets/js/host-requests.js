@@ -141,13 +141,14 @@
             var rawEmail = app.email || 'N/A';
             var rawPhone = app.phone || 'N/A';
             var statusLabel = amhState.tab.charAt(0).toUpperCase() + amhState.tab.slice(1);
+            var serialNo = ((amhState.page - 1) * 10) + index + 1;
             
             // Build Desktop Row
             var row = document.createElement('tr');
             row.className = 'amh-table-body-row';
             row.style.animationDelay = (index * 0.05) + 's';
             row.innerHTML =
-                '<td class="amh-table-body-cell"><div class="amh-cell-id-wrap">' + app.id + '</div></td>' +
+                '<td class="amh-table-body-cell"><div class="amh-cell-id-wrap">' + serialNo + '</div></td>' +
                 '<td class="amh-table-body-cell">' +
                     '<div class="amh-applicant-info">' +
                         '<span class="amh-applicant-email">' + rawEmail + '</span>' +
@@ -169,10 +170,10 @@
                     '</span>' +
                 '</td>' +
                 '<td class="amh-table-body-cell amh-actions-cell">' +
-                    '<button class="amh-action-btn" onclick="amhViewForms(' + app.id + ')">' +
+                    '<a href="?page=authme-view-form&id=' + app.id + '" class="amh-action-btn">' +
                         '<svg class="amh-action-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>' +
                         'View Forms' +
-                    '</button>' +
+                    '</a>' +
                 '</td>';
             tableBody.appendChild(row);
 
@@ -180,16 +181,16 @@
             var mCard = document.createElement('div');
             mCard.className = 'amh-t-datas';
             mCard.innerHTML = 
-                '<div class="amh-t-data-entry"><div class="data-label">ID</div><div class="data-entry">' + app.id + '</div></div>' +
+                '<div class="amh-t-data-entry"><div class="data-label">S.No</div><div class="data-entry">' + serialNo + '</div></div>' +
                 '<div class="amh-t-data-entry"><div class="data-label">Email</div><div class="data-entry">' + rawEmail + '</div></div>' +
                 '<div class="amh-t-data-entry"><div class="data-label">Mobile Number</div><div class="data-entry">' + rawPhone + '</div></div>' +
                 '<div class="amh-t-data-entry"><div class="data-label">Date/Time</div><div class="data-entry">' + app.date + '</div></div>' +
                 '<div class="amh-t-data-entry amh-t-data-action">' +
                     '<div class="data-status ' + amhState.tab + '">' + statusLabel + '</div>' +
-                    '<button class="data-btn" onclick="amhViewForms(' + app.id + ')">' +
+                    '<a href="?page=authme-view-form&id=' + app.id + '" class="data-btn">' +
                         '<svg class="amh-action-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>' +
                         'View' +
-                    '</button>' +
+                    '</a>' +
                 '</div>';
             mobileBody.appendChild(mCard);
         });
@@ -293,16 +294,7 @@
         }
     };
 
-    window.amhViewForms = function(appId) {
-        // Here we hook into whatever functionality the dashboard relies on
-        // such as opening a modal to view the user's data. 
-        // We will mock this or provide basic feedback.
-        if (window.authmeShowToaster) {
-            window.authmeShowToaster('View Application', 'Loading details for Application #' + appId);
-        } else {
-            alert("Opening forms for application #" + appId);
-        }
-    };
+
 
     function amhUpdateSearchClearBtn() {
         var input = document.getElementById('amh-search-input');
