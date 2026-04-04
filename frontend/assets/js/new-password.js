@@ -11,6 +11,8 @@
  *   - On success: shows toast, sends confirmation email (server-side),
  *     then closes the overlay after 2s
  *
+ * Flow: Verify OTP → New Password Form → Password Reset Complete
+ *
  * @package AuthMe
  */
 

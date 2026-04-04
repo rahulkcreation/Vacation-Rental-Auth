@@ -7,6 +7,8 @@
  *   - Resend OTP logic
  *   - Verify & Proceed → finalizes registration or login
  *
+ * Flow: OTP Screen → Verify OTP (server-side) → Registration/Login completion
+ *
  * @package AuthMe
  */
 

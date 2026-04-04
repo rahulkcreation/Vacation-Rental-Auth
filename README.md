@@ -1,677 +1,100 @@
-# AuthMe WordPress Plugin
+# AuthMe Plugin
 
-**Version:** 1.1.0  
-**Author:** Art-Tech Fuzion  
-**Requires:** WordPress 5.0+, PHP 7.4+  
-**Plugin URI:** https://arttechfuzion.com
+AuthMe is a comprehensive, modern, strictly decoupled WordPress plugin designed to handle user authentication, verification (via OTP), and Host request management.
 
----
+This plugin focuses entirely on providing a sleek, popup-based frontend experience and a robust backend architecture, without conflicting with any existing themes or WordPress logic.
 
-## Table of Contents
+## 📁 Codebase Architecture & File Structure
 
-- [Overview](#overview)
-- [Features](#features)
-- [Requirements](#requirements)
-- [Installation](#installation)
-  - [Installing Composer](#installing-composer)
-    - [Windows](#installing-composer-on-windows)
-    - [macOS](#installing-composer-on-macos)
-  - [Installing PHP Dependencies (Vendor Files)](#installing-php-dependencies-vendor-files)
-- [How the Plugin Works](#how-the-plugin-works)
-  - [System Architecture](#system-architecture)
-  - [User Registration Flow](#user-registration-flow)
-  - [User Login Flow](#user-login-flow)
-  - [Password Reset Flow](#password-reset-flow)
-- [File Structure](#file-structure)
-- [Database](#database)
-- [Admin Panel](#admin-panel)
-- [WooCommerce Integration](#woocommerce-integration)
-- [Security Features](#security-features)
-- [AJAX Actions Reference](#ajax-actions-reference)
-- [Hooks & Filters](#hooks--filters)
-- [Troubleshooting](#troubleshooting)
+The entire codebase has been organized using strict MVC patterns, separating Logic (includes/classes), Views (templates), and Assets (CSS/JS).
+
+### 1. Root Directory
+
+- **`authme.php`**: The main entry point of the plugin.
+  - Starts up the plugin and handles versioning.
+  - Loads all PHP classes.
+  - Registers the `traveller` and `host` roles.
+  - Hooks into WordPress to inject the frontend modals (`wp_footer`).
+  - Registers the custom virtual rewrite route (`/authme`) to auto-open the popup on the home page.
+  - Registers global AJAX routes for all frontend user actions.
+- **`composer.json` & `vendor/`**: Manages backend dependencies. This plugin explicitly requires `giggsey/libphonenumber-for-php` to validate international mobile numbers reliably.
 
 ---
 
-## Overview
+### 2. `/includes/` (Core Backend Logic)
 
-AuthMe is a comprehensive WordPress authentication plugin that provides a secure, modern authentication system with **OTP (One-Time Password) verification** for user registration and login flows.
+This directory contains the PHP classes that actually power the functionality.
 
-The plugin replaces the default WordPress login/registration with a beautiful popup overlay that includes:
-- Real-time username and email availability checking
-- Mobile number validation with international support
-- OTP-based email verification for registration
-- Password strength validation
-- Password reset with OTP verification
-- Custom "traveller" user role for new users
-- WooCommerce checkout protection
-
----
-
-## Features
-
-- **Popup Authentication Overlay** - Beautiful modal popup for all auth actions
-- **OTP Verification** - 6-digit one-time password sent via email
-- **Real-time Validation** - Instant feedback on username/email availability
-- **Password Strength Meter** - Visual indicator for password security
-- **International Mobile Support** - Phone number validation using libphonenumber
-- **Custom User Role** - New users get "traveller" role by default
-- **WooCommerce Integration** - Protects checkout for non-logged-in users
-- **Admin Dashboard** - Manage plugin settings and database
-- **Email Notifications** - Beautiful HTML emails for OTP and password changes
-- **Scheduled Cleanup** - Automatic cleanup of expired OTPs via cron
+- **`assets-loader.php`**: Acts as the _Single Source of Truth_ for file mappings. Every CSS, JS, or template file is defined here with its direct server path and public URL. This prevents broken URLs and intelligently manages browser cache-busting using `filemtime()`.
+- **`db-schema.php`**: Contains the raw SQL table structure. Defines the `authme_otp_storage` (for keeping temporary OTPs) and `host_request` (for storing user submissions for hosting).
+- **`class-authme-db.php`**: The DB Controller. Reads the schema, verifies if tables exist, and creates/updates them if the WordPress environment is missing them. Powered by dbDelta.
+- **`class-authme-auth.php`**: The main Authentication Controller. It handles the AJAX endpoints for registering a new user, logging them in, resetting passwords, and validating if a username/email already exists.
+- **`class-authme-otp.php`**: Manages all logic surrounding One-Time Passwords. It generates secure 6-digit codes, hashes them, stores them in the DB, and compares them when a user submits an OTP.
+- **`class-authme-email.php`**: Manages all outgoing emails. Triggers OTP emails using customized templates and triggers status updates for Host requests (approved/rejected).
+- **`class-authme-host-request.php`**: Handles the "Become a Host" multi-step flow logic. It securely intercepts JPEG image uploads, forces them into the WordPress Media Library as private attachments, and manages the AJAX logic for completing host applications.
+- **`assets/global.css`**: The core design system tokens. Defines global CSS variables (colors, borders, fonts) used across every single frontend and backend stylesheet.
 
 ---
 
-## Requirements
+### 3. `/frontend/` (User Facing UI & Client Logic)
 
-- **WordPress:** 5.0 or higher
-- **PHP:** 7.4 or higher
-- **PHP Extensions:** json, mbstring (for libphonenumber)
-- **Composer:** For installing PHP dependencies
+This directory controls everything a normal visitor sees.
 
----
+- **`templates/` (Views)**:
+  - **`overlay.php`**: The primary backdrop modal injection container. It holds standard screens like Login, Registration, and Password Reset.
+  - **`login.php` | `register.php` | `otp.php` | `forgot-password.php` | `new-password.php`**: The HTML forms rendered inside the overlay.
+  - **`toaster.php`**: The global notification element used for displaying success/error popup alerts.
+  - **`host-request.php`**: The multi-step modal structure for users applying to become a Host.
+  - **`email-*.php`**: Formatted HTML templates sent to the user's inbox on OTP or notification triggers.
 
-## Installation
+- **`assets/js/` (Client Logic)**:
+  - **`global.js`**: Contains a universal AJAX wrapper `authmeAjax()`, regex validation helpers, and DOM state classes used by every script.
+  - **`overlay.js`**: Handles the opening/closing animations of the main popup and screen transitions.
+  - **`login.js` | `register.js` | `otp.js` | `forgot-password.js` | `new-password.js`**: Specific DOM binders and AJAX execution for each respective step.
+  - **`country-phone-regex.js`**: Hardcoded front-end regex mapping to validate mobile numbers quickly before sending to the server.
+  - **`host-request.js`**: Manages the complex state of the Host Registration flow. Tracks the current step, handles direct file uploads using `XMLHttpRequest` with progress bars, and sends the final JSON state to the backend.
 
-### Installing Composer
-
-Composer is a dependency manager for PHP. AuthMe uses Composer to install the `libphonenumber-for-php` library for validating international phone numbers.
-
-#### Installing Composer on Windows
-
-**Method 1: Using Composer Installer (Recommended)**
-
-1. Download the Composer installer from [getcomposer.org](https://getcomposer.org/Composer-Setup.exe)
-2. Run the installer (Composer-Setup.exe)
-3. Follow the installation wizard:
-   - Select your PHP executable path (usually found in your local server setup like XAMPP, WAMP, or MAMP)
-   - Enable developer mode if you want (optional)
-   - Complete the installation
-4. Open Command Prompt and verify installation:
-   ```
-   composer --version
-   ```
-
-**Method 2: Using XAMPP/WAMP**
-
-If you're using XAMPP or WAMP:
-
-1. Make sure PHP is in your system PATH
-2. Download Composer for Windows from [getcomposer.org/download](https://getcomposer.org/download/)
-3. Run the following commands in Command Prompt:
-   ```
-   php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-   php composer-setup.php
-   php -r "unlink('composer-setup.php');"
-   move composer.phar C:\bin\composer.phar
-   echo @php "%~dp0composer.phar" %*>C:\bin\composer.bat
-   ```
-4. Add `C:\bin` to your system PATH
-5. Verify: `composer --version`
-
-#### Installing Composer on macOS
-
-**Method 1: Using Homebrew (Recommended)**
-
-1. Open Terminal
-2. If Homebrew is not installed, install it:
-   ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
-3. Install Composer via Homebrew:
-   ```bash
-   brew install composer
-   ```
-4. Verify installation:
-   ```bash
-   composer --version
-   ```
-
-**Method 2: Using PHP Installer Script**
-
-1. Open Terminal
-2. Download the Composer installer:
-   ```bash
-   curl -sS https://getcomposer.org/installer | php
-   ```
-3. Move Composer to a global location:
-   ```bash
-   mv composer.phar /usr/local/bin/composer
-   ```
-4. Make it executable:
-   ```bash
-   chmod +x /usr/local/bin/composer
-   ```
-5. Verify installation:
-   ```bash
-   composer --version
-   ```
-
-**Method 3: Using Mac's Built-in PHP**
-
-1. Open Terminal
-2. Download Composer:
-   ```bash
-   curl -sS https://getcomposer.org/installer -o composer-setup.php
-   ```
-3. Run the installer:
-   ```bash
-   php composer-setup.php --install-dir=/usr/local/bin --filename=composer
-   ```
-4. Verify:
-   ```bash
-   composer --version
-   ```
+- **`assets/css/` (Styling)**:
+  - Contains precisely scoped CSS for every template. E.g., `register.css` strictly maps its styles to the classes inside `register.php`. Ensures zero bleed/conflicts globally.
 
 ---
 
-### Installing PHP Dependencies (Vendor Files)
+### 4. `/admin/` (Administrator Dashboard & Management)
 
-After installing Composer, you need to install the phone number validation library for AuthMe.
+Controls the interfaces seen by Administrators in the WP Backend (accessible via the `AuthMe` menu).
 
-**Important:** The `vendor` folder contains the libphonenumber library. **DO NOT include the `vendor` folder in your git repository** as it contains external dependencies managed by Composer.
+- **`class-authme-admin.php`**: Handles wp-admin menu definitions. Provides the secure backend-only AJAX routes for approving/rejecting Hosts and querying the custom database tables.
+- **`templates/` (Admin Views)**:
+  - **`dashboard.php`**: Welcome screen and analytics.
+  - **`database.php`**: Health check page for the plugin's custom tables.
+  - **`host-requests.php`**: Data table UI listing all incoming and processed host applications.
+  - **`view-form.php`**: Detailed view modal showing exactly what the user submitted, including document previews.
+  - **`admin-toaster.php`**: A separate toaster for admin panel notifications.
+- **`assets/js/` & `assets/css/`**:
+  - Dedicated scripts and styling for the internal WordPress admin interface views.
 
-**Phone Number Validation:** AuthMe uses the `giggsey/libphonenumber-for-php` library for validating international phone numbers.
+## ⚙️ Key Technical Features & Workflows
 
-#### Step-by-Step Installation
+### 1. The Global Entry Point (Overlay Injection)
 
-1. **Navigate to the Plugin Directory**
+If a user goes to `yoursite.com/authme`, the plugin redirects them to `yoursite.com/?authme_open=1`. The `wp_footer` hook detects this trigger and auto-opens the JS overlay automatically.
 
-   Open your terminal/command prompt and go to the AuthMe plugin folder:
-   
-   ```bash
-   cd /path/to/your/wordpress/wp-content/plugins/authme-2
-   ```
-   
-   Or on Windows:
-   ```cmd
-   cd C:\path\to\your\wordpress\wp-content\plugins\authme-2
-   ```
+### 2. Multi-Step Host Registry with Media Upload
 
-2. **Install the Phone Number Validation Library**
+The "Become a Host" popup avoids heavy Base64 storage. It leverages temporary asynchronous file uploads directly into WordPress's core media uploads function (`wp_handle_upload`) along with real-time UI progress bars. The DB only receives the final URL locations.
 
-   Run this command to install the required dependency:
-   
-   ```bash
-   composer require giggsey/libphonenumber-for-php
-   ```
-   
-   This will download the `libphonenumber-for-php` library and create the `vendor` folder with all necessary files.
+### 3. Role Checking
 
-3. **Verify Installation**
+The platform utilizes standard WordPress roles. New signups are immediately categorized as `traveller`. If a user is successfully approved as a Host via the backend dashboard, they are automatically upgraded to `host`. The platform proactively hides Host-only features from Travellers and Vice Versa.
 
-   Check that the vendor folder was created:
-   
-   ```bash
-   ls -la vendor
-   ```
-   
-   You should see:
-   ```
-   vendor/
-   ├── autoload.php
-   ├── giggsey/
-   │   └── libphonenumber-for-php/
-   └── composer/
-   ```
+### 4. Zero Conflicting Styles
 
-4. **Uploading to WordPress**
+This plugin relies on **100% custom CSS** (no Tailwind, no Bootstrap). A single `global.css` specifies core HSL tokens. Every other CSS file uses these tokens natively, meaning color/branding changes only happen in a single place.
 
-   When uploading the plugin to WordPress:
-   
-   **Include these files/folders:**
-   - `authme.php`
-   - `composer.json` (for reference)
-   - `includes/` folder
-   - `templates/` folder
-   - `assets/` folder
-   - `admin/` folder
-   - `vendor/` folder (generated by Composer)
-   
-   **Do NOT modify:**
-   - Files inside `vendor/` (these are external dependencies)
+### 5. International Number Formatting
 
-#### Troubleshooting Composer Issues
-
-**"composer: command not found"**
-- Make sure Composer is installed and added to your system PATH
-- Restart your terminal after installation
-
-**"PHP version not met"**
-- Update PHP to a version >= 7.4
-- Or modify `composer.json` to allow older PHP versions (not recommended)
-
-**"ext-gmp extension not found"**
-- Install the GMP extension for PHP
-- On Ubuntu/Debian: `sudo apt-get install php-gmp`
-- On macOS with Homebrew: `brew install php-gmp`
-- On Windows: Enable in php.ini: `extension=gmp`
+To prevent invalid spam entries, we combine Frontend Regex Checks (for fast UI response) with Backend checking (`libphonenumber-for-php`) to guarantee the database holds clean, fully validated formatted numbers.
 
 ---
 
-## How the Plugin Works
-
-### System Architecture
-
-The plugin follows a clean MVC-like architecture:
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    WordPress Core                        │
-└─────────────────────────────────────────────────────────┘
-                            │
-                            ▼
-┌─────────────────────────────────────────────────────────┐
-│                    authme.php                            │
-│              (Main Plugin Entry Point)                   │
-└─────────────────────────────────────────────────────────┘
-                            │
-        ┌───────────────────┼───────────────────┐
-        ▼                   ▼                   ▼
-┌───────────────┐  ┌───────────────┐  ┌───────────────┐
-│  AuthMe_Auth  │  │  AuthMe_OTP   │  │ AuthMe_Email  │
-│  (Login/Reg)  │  │  (6-digit)    │  │  (Sending)    │
-└───────────────┘  └───────────────┘  └───────────────┘
-        │                   │                   │
-        └───────────────────┼───────────────────┘
-                            ▼
-┌─────────────────────────────────────────────────────────┐
-│                   AuthMe_DB                              │
-│              (Database Operations)                       │
-└─────────────────────────────────────────────────────────┘
-                            │
-                            ▼
-┌─────────────────────────────────────────────────────────┐
-│              wp_authme_otp_storage                       │
-│           (Custom Database Table)                        │
-└─────────────────────────────────────────────────────────┘
-```
-
-### User Registration Flow
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        REGISTRATION FLOW                         │
-└─────────────────────────────────────────────────────────────────┘
-
-1. User clicks "Register" → Opens overlay on "register" screen
-   │
-   ▼
-2. User fills form fields:
-   - Username (real-time availability check)
-   - Email (real-time availability check)
-   - Mobile (international format validation via libphonenumber)
-   - Password (strength meter shown)
-   │
-   ▼
-3. User clicks "Send OTP"
-   │
-   ├─► AJAX: authme_send_otp
-   │    │
-   │    ├─► Generate 6-digit random OTP
-   │    ├─► Store in wp_authme_otp_storage (purpose: 'registration')
-   │    ├─► Store user data (username, email, password hash) in user_data column
-   │    ├─► Send OTP via email
-   │    └─► Return success/error
-   │
-   ▼
-4. OTP screen appears:
-   - 60-second countdown timer
-   - 6 input fields for OTP digits
-   - Auto-focus, auto-tab between fields
-   - Paste support for entire code
-   │
-   ▼
-5. User enters OTP and clicks "Verify & Proceed"
-   │
-   ├─► AJAX: authme_verify_otp
-   │    │
-   │    ├─► Check OTP exists and not expired (60 seconds)
-   │    ├─► Check OTP matches
-   │    ├─► Mark as verified in database
-   │    └─► Return success/error
-   │
-   ▼
-6. If OTP verified:
-   │
-   ├─► AJAX: authme_register_user
-   │    │
-   │    ├─► Retrieve stored user_data
-   │    ├─► Check OTP is verified
-   │    ├─► Create WordPress user with 'traveller' role
-   │    ├─► Set user metadata (mobile, email, verified status)
-   │    ├─► Auto-login user
-   │    ├─► Clean up OTP record
-   │    └─► Return success
-   │
-   ▼
-7. Success! Overlay closes, page reloads
-   └─► User is now logged in as "traveller"
-```
-
-### User Login Flow
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                          LOGIN FLOW                             │
-└─────────────────────────────────────────────────────────────────┘
-
-1. User clicks "Login" → Opens overlay on "login" screen
-   │
-   ▼
-2. User enters email/username
-   │
-   ├─► AJAX: authme_check_user_exists
-   │    │
-   │    ├─► Look up user by email or username
-   │    └─► Return user exists status (enables password field)
-   │
-   ▼
-3. User enters password
-   │
-   ▼
-4. User clicks "Login"
-   │
-   ├─► AJAX: authme_login_user
-   │    │
-   │    ├─► Authenticate credentials via wp_signon
-   │    ├─► Set auth cookie
-   │    ├─► Update last login metadata
-   │    └─► Return success/error
-   │
-   ▼
-5. Success! Overlay closes, page reloads
-   └─► User is now logged in
-```
-
-### Password Reset Flow
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                      PASSWORD RESET FLOW                        │
-└─────────────────────────────────────────────────────────────────┘
-
-1. User clicks "Forgot Password?" → Opens "forgot-password" screen
-   │
-   ▼
-2. User enters email/username
-   │
-   ├─► AJAX: authme_forgot_check_user
-   │    │
-   │    ├─► Look up WordPress user
-   │    └─► Return user found status
-   │
-   ▼
-3. User clicks "Send Reset OTP"
-   │
-   ├─► AJAX: authme_send_otp
-   │    │
-   │    ├─► Generate 6-digit OTP
-   │    ├─► Store (purpose: 'password_reset')
-   │    ├─► Send via email
-   │    └─► Return success/error
-   │
-   ▼
-4. OTP screen appears (60-second countdown)
-   │
-   ▼
-5. User enters OTP and clicks "Verify"
-   │
-   ├─► AJAX: authme_verify_otp
-   │    │
-   │    ├─► Verify OTP
-   │    └─► Return success (enables new password form)
-   │
-   ▼
-6. New password screen:
-   - New password field (with strength meter)
-   - Confirm password field
-   │
-   ▼
-7. User enters new password and clicks "Reset Password"
-   │
-   ├─► AJAX: authme_reset_password
-   │    │
-   │    ├─► Verify OTP is still valid
-   │    ├─► Update user password via wp_set_password
-   │    ├─► Send "password changed" notification email
-   │    ├─► Clean up OTP record
-   │    └─► Return success
-   │
-   ▼
-8. Success! User can now login with new password
-```
-
----
-
-## File Structure
-
-```
-AuthMe/
-├── authme.php                 # Main plugin entry point
-├── composer.json              # PHP dependencies definition
-├── README.md                  # This documentation
-│
-├── includes/
-│   ├── assets-loader.php      # Centralized CSS/JS enqueuing
-│   ├── class-authme-auth.php  # Authentication logic (login/register/reset)
-│   ├── class-authme-db.php    # Database table management
-│   ├── class-authme-email.php # Email sending functions
-│   └── class-authme-otp.php   # OTP generation/verification/storage
-│
-├── templates/                  # Frontend HTML templates
-│   ├── overlay.php            # Main popup container
-│   ├── login.php              # Login form
-│   ├── register.php           # Registration form
-│   ├── otp.php                # OTP verification screen
-│   ├── forgot-password.php    # Password reset request
-│   ├── new-password.php       # New password form
-│   ├── toaster.php            # Toast notification container
-│   ├── email-otp.php           # OTP email HTML template
-│   └── email-password-changed.php  # Password changed email
-│
-├── assets/
-│   ├── css/                   # Stylesheets
-│   │   ├── global.css         # Shared styles, variables
-│   │   ├── overlay.css        # Popup container styles
-│   │   ├── login.css          # Login form styles
-│   │   ├── register.css        # Registration form styles
-│   │   ├── otp.css            # OTP input styles
-│   │   ├── forgot-password.css # Forgot password styles
-│   │   ├── new-password.css    # New password form styles
-│   │   └── toaster.css        # Toast notification styles
-│   │
-│   └── js/                    # JavaScript files
-│       ├── global.js          # Utilities (ajax, validation, password strength)
-│       ├── overlay.js         # Popup open/close, screen switching
-│       ├── login.js           # Login form logic
-│       ├── register.js        # Registration with validation
-│       ├── otp.js             # OTP input handling, timer
-│       ├── forgot-password.js  # Password reset flow
-│       ├── new-password.js    # New password form
-│       ├── toaster.js         # Toast notifications
-│       └── country-phone-regex.js  # Country phone patterns
-│
-├── admin/                     # WordPress admin panel
-│   ├── class-authme-admin.php # Admin menu registration
-│   ├── templates/
-│   │   ├── dashboard.php      # Admin dashboard page
-│   │   └── database.php      # Database management page
-│   └── assets/
-│       ├── admin-global.css   # Admin CSS variables
-│       ├── admin.css          # Admin styles
-│       └── admin.js           # Admin AJAX handlers
-│
-└── vendor/                    # Composer dependencies (DO NOT MODIFY)
-    ├── autoload.php          # Composer autoloader
-    ├── giggsey/
-    │   └── libphonenumber-for-php/  # Google phone number library
-    └── composer/
-        ├── autoload_classmap.php
-        ├── autoload_real.php
-        └── ...               # Composer generated files
-```
-
----
-
-## Database
-
-### Custom Table
-
-The plugin creates one custom database table:
-
-**Table Name:** `wp_authme_otp_storage` (prefix may vary)
-
-| Column | Type | Description |
-|--------|------|-------------|
-| id | INT (AUTO_INCREMENT) | Primary key |
-| email | VARCHAR(100) | Recipient email address |
-| otp_code | VARCHAR(6) | 6-digit OTP code |
-| purpose | VARCHAR(20) | Purpose: 'registration', 'login', 'password_reset' |
-| created_at | TIMESTAMP | When OTP was created |
-| expires_at | TIMESTAMP | When OTP expires (created_at + 60 seconds) |
-| is_verified | TINYINT(1) | 0 = pending, 1 = verified |
-| user_data | TEXT | JSON data for registration (username, email, password hash) |
-
-### Created on Plugin Activation
-
-The table is created automatically when the plugin is activated via `dbDelta()`.
-
----
-
-## Admin Panel
-
-Access via WordPress admin menu: **AuthMe**
-
-### Dashboard
-
-- Plugin information and version
-- Usage instructions
-- Direct URL to open popup: `/authme`
-- Trigger link HTML code
-- JavaScript function: `authmeOpenOverlay()`
-
-### Database Management
-
-- View table status
-- View table columns
-- Create/update tables manually
-
----
-
-## WooCommerce Integration
-
-The plugin integrates with WooCommerce when the plugin is active:
-
-| Page | Behavior for Non-Logged-In Users |
-|------|-----------------------------------|
-| **Cart** | "Proceed to Checkout" button opens login popup on the same page |
-| **Checkout** | Redirects back to cart (must login first) |
-| **My Account** | Redirects to homepage with popup auto-open |
-
----
-
-## Security Features
-
-1. **OTP Verification** - Required for registration and password reset
-2. **Nonce Validation** - All AJAX requests use WordPress security nonces
-3. **Password Hashing** - Uses WordPress password hashing (`wp_hash_password`)
-4. **Admin Protection** - Administrators cannot use the popup
-5. **Input Sanitization** - All user inputs are sanitized
-6. **OTP Expiry** - 60-second validity with automatic cleanup
-7. **Automatic Cleanup** - Cron job removes expired/verified OTPs twice daily
-
----
-
-## AJAX Actions Reference
-
-| Action | Handler | Description |
-|--------|---------|-------------|
-| `authme_check_username` | `AuthMe_Auth::ajax_check_username` | Check if username is available |
-| `authme_check_email` | `AuthMe_Auth::ajax_check_email` | Check if email is available |
-| `authme_check_user_exists` | `AuthMe_Auth::ajax_check_user_exists` | Check if user exists for login |
-| `authme_login_user` | `AuthMe_Auth::ajax_login_user` | Authenticate and login user |
-| `authme_register_user` | `AuthMe_Auth::ajax_register_user` | Create new WordPress user |
-| `authme_complete_login` | `AuthMe_Auth::ajax_complete_login` | Post-OTP registration |
-| `authme_forgot_check_user` | `AuthMe_Auth::ajax_forgot_check_user` | Check user for password reset |
-| `authme_reset_password` | `AuthMe_Auth::ajax_reset_password` | Reset user password |
-| `authme_send_otp` | `AuthMe_OTP::ajax_send_otp` | Generate and send OTP |
-| `authme_verify_otp` | `AuthMe_OTP::ajax_verify_otp` | Verify OTP code |
-
----
-
-## Hooks & Filters
-
-### Actions
-
-- `authme_otp_cleanup` - Scheduled cron action for cleaning expired OTPs
-- `wp_enqueue_scripts` - Enqueue frontend assets
-- `wp_footer` - Inject overlay HTML
-- `init` - Register rewrite rules
-- `template_redirect` - Handle virtual page and WooCommerce interception
-
-### Filters
-
-- `query_vars` - Register custom query variables
-- `plugin_action_links_{plugin_basename}` - Add settings link to plugins page
-
-### Constants
-
-| Constant | Description |
-|----------|-------------|
-| `AUTHME_VERSION` | Plugin version |
-| `AUTHME_PLUGIN_DIR` | Server path to plugin directory |
-| `AUTHME_PLUGIN_URL` | URL to plugin directory |
-| `AUTHME_PLUGIN_BASENAME` | Plugin basename identifier |
-
----
-
-## Troubleshooting
-
-### Plugin not working after upload
-
-1. Make sure you ran `composer require giggsey/libphonenumber-for-php` and the `vendor` folder exists
-2. Verify the `vendor/giggsey/libphonenumber-for-php` folder was created (this is required for phone number validation)
-3. Check PHP version is 7.4 or higher
-4. Verify WordPress version is 5.0 or higher
-5. Check that the `json` and `mbstring` PHP extensions are enabled
-
-### OTP not being sent
-
-1. Check that WordPress can send emails (use WP Mail SMTP plugin)
-2. Verify the email address is correct
-3. Check spam/junk folders
-4. Ensure the `wp_authme_otp_storage` table exists
-
-### Composer not working
-
-1. Verify Composer is installed: `composer --version`
-2. Check PHP is in system PATH
-3. If there are memory issues: `php -d memory_limit=512M composer require giggsey/libphonenumber-for-php`
-4. Make sure you're running the command from the plugin directory
-
-### Database table not created
-
-1. Go to WordPress Admin > AuthMe > Database
-2. Click "Create/Update Table"
-3. Check for any database errors in PHP error log
-
-### Overlay not appearing
-
-1. Make sure you're logged out (popup only shows for non-logged-in users)
-2. Check browser console for JavaScript errors
-3. Verify assets are being loaded (check network tab)
-4. Try visiting `/authme` URL directly
-
----
-
-## Support
-
-For issues and feature requests, contact the author at https://arttechfuzion.com
-
----
-
-## License
-
-This plugin is proprietary software by Art-Tech Fuzion.
+_AuthMe Plugin was designed for maximum scalability, caching optimization, and clean WordPress coding standards._

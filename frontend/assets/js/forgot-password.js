@@ -7,6 +7,8 @@
  *   3. Switches to OTP screen for verification
  *   4. After OTP verified, switches to new-password screen
  *
+ * Flow: Forgot Password → Send OTP → Verify OTP → New Password → Reset Complete
+ *
  * @package AuthMe
  */
 

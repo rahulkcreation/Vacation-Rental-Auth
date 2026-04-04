@@ -1,6 +1,24 @@
 (function () {
     'use strict';
 
+    /**
+     * AuthMe — Country Phone Data Registry
+     *
+     * Pre-defined country data for international phone number validation.
+     * Used by register.js and host-request.js to populate country code dropdowns
+     * and validate mobile numbers against country-specific regex patterns.
+     *
+     * Each entry contains:
+     *   code    - Country calling code (e.g., +91)
+     *   region  - ISO 3166-1 alpha-2 region code (e.g., IN for India)
+     *   country - Display country name
+     *   flag    - Emoji flag for visual display
+     *   regex   - Regular expression pattern for valid mobile numbers
+     *   example - Example number for placeholder text
+     *
+     * @package AuthMe
+     */
+
     window.authmeCountryPhoneData = [
         {
             code: '+91',

@@ -1,5 +1,5 @@
 /**
- * AuthMe — Register Form JavaScript
+ * AuthMe — Registration Form JavaScript
  *
  * Handles the registration flow:
  *   1. Real-time username availability check (debounced AJAX)
@@ -8,6 +8,8 @@
  *   4. Password strength indicator
  *   5. Confirm password match
  *   6. "Send OTP" → stores user data, sends OTP, switches to OTP screen
+ *
+ * Flow: Register Form → Send OTP → OTP Screen → Verify OTP → Auto-create User
  *
  * @package AuthMe
  */

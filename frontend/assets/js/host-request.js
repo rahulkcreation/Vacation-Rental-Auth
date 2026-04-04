@@ -1,6 +1,20 @@
 (function (window) {
     "use strict";
 
+    /**
+     * AuthMe — Become a Host Modal JavaScript
+     *
+     * Handles the multi-step "Become a Host" application flow:
+     *   Step 1: Personal Information (username, fullname, email, mobile with country code)
+     *   Step 2: Document Upload (Aadhar Front/Back, PAN Card - JPEG only, max 1MB)
+     *   Step 3: OTP Verification (6-digit code sent to email)
+     *   Step 4: Success Message (auto-close after 15 seconds)
+     *
+     * Flow: Personal Info → Documents → OTP Verification → Application Submitted
+     *
+     * @package AuthMe
+     */
+
     /* ── DOM Elements ─────────────────────── */
     var backdrop  = document.getElementById('authme-host-backdrop');
     var container = document.getElementById('authme-host-container');

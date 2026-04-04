@@ -214,20 +214,7 @@
       }
     });
 
-    // ── WooCommerce: Intercept "Proceed to Checkout" on cart page ──
-    // Only blocks non-logged-in users (overlay backdrop only exists for them)
-    var authmeBackdrop = document.getElementById("authme-overlay-backdrop");
-    if (authmeBackdrop) {
-      var checkoutBtn = document.querySelector(
-        ".checkout-button, .wc-proceed-to-checkout a, a.checkout-button",
-      );
-      if (checkoutBtn) {
-        checkoutBtn.addEventListener("click", function (e) {
-          e.preventDefault();
-          authmeOpenOverlay();
-        });
-      }
-    }
+
   });
 
   // Expose globally
