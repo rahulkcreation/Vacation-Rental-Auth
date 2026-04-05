@@ -98,35 +98,50 @@
         // Documents
         var docContainer = document.getElementById('amv-view-docs-list');
         docContainer.innerHTML = '';
+        // 1. Try to find the documents object under 'documents' or 'files'
+        var docsSource = basicData.documents || basicData.files || {};
         var hasDocs = false;
-        
-        // Match specific json keys submitted by frontend JS
-        var docsObj = basicData.documents || {};
-        var docMap = {
-            'aadharf': 'Aadhar Card (Front)',
-            'aadharb': 'Aadhar Card (Back)',
-            'pan': 'PAN Card'
-        };
 
-        for (var key in docMap) {
-            if (docMap.hasOwnProperty(key) && docsObj[key]) {
-                hasDocs = true;
-                var docUrl = docsObj[key]; // Usually base64 encoded image
-
-                var docHtml = 
-                    '<div class="amh-doc-item">' +
-                        '<div class="amh-doc-left">' +
-                            '<svg class="amh-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>' +
-                            '<span class="amh-doc-name">' + docMap[key] + '</span>' +
-                        '</div>' +
-                        '<button class="amh-btn-view" onclick="amvViewDocument(\'' + docUrl + '\')" aria-label="View Document">' +
-                            '<svg class="amh-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>' +
-                        '</button>' +
-                    '</div>';
-                
-                docContainer.insertAdjacentHTML('beforeend', docHtml);
+        /**
+         * Robust lookup: Check for variations like 'aadharf', 'front', 'aadhar_front'
+         */
+        function getDocData(keys) {
+            for (var i = 0; i < keys.length; i++) {
+                if (docsSource[keys[i]]) return docsSource[keys[i]];
             }
+            return null;
         }
+
+        var docConfigs = [
+            { keys: ['aadharf', 'front', 'aadhar_front'], label: 'Aadhar Card (Front)' },
+            { keys: ['aadharb', 'back', 'aadhar_back'], label: 'Aadhar Card (Back)' },
+            { keys: ['pan', 'hand', 'pan_card'], label: 'PAN Card' }
+        ];
+
+        docConfigs.forEach(function(config) {
+            var rawData = getDocData(config.keys);
+            if (rawData) {
+                hasDocs = true;
+
+                // Handle both simple URL string and new object format { url, attachment_id }
+                var url = typeof rawData === 'object' ? rawData.url : rawData;
+
+                if (url) {
+                    var docHtml = 
+                        '<div class="amh-doc-item">' +
+                            '<div class="amh-doc-left">' +
+                                '<svg class="amh-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>' +
+                                '<span class="amh-doc-name">' + config.label + '</span>' +
+                            '</div>' +
+                            '<button class="amh-btn-view" onclick="amvViewDocument(\'' + url + '\')" aria-label="View Document">' +
+                                '<svg class="amh-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>' +
+                            '</button>' +
+                        '</div>';
+                    
+                    docContainer.insertAdjacentHTML('beforeend', docHtml);
+                }
+            }
+        });
 
         if (!hasDocs) {
             docContainer.innerHTML = '<p style="font-size: 0.875rem; color: var(--authme-grey-light-text); margin:0;">No documents uploaded.</p>';

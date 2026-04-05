@@ -297,15 +297,33 @@ class AuthMe_Host_Request {
 
     /**
      * Cleanup rejected host requests older than 7 days.
-     * Keeps the database clean from old rejected data.
+     * Keeps the database and Media Library clean from old rejected data.
      * Called via cron twice daily.
      */
     public function cleanup_rejected_requests() {
         global $wpdb;
-        // Delete rows where status is 'rejected' and older than 7 days
-        $wpdb->query( $wpdb->prepare(
-            "DELETE FROM {$this->table_name} WHERE status = 'rejected' AND date < DATE_SUB(NOW(), INTERVAL 7 DAY)"
+
+        // 1. Fetch targeted rejected requests first
+        $rejected_requests = $wpdb->get_results( $wpdb->prepare(
+            "SELECT id, user_data FROM {$this->table_name} WHERE status = 'rejected' AND date < DATE_SUB(NOW(), INTERVAL 7 DAY)"
         ) );
+
+        if ( ! empty( $rejected_requests ) ) {
+            foreach ( $rejected_requests as $row ) {
+                $decoded = json_decode( $row->user_data, true );
+                if ( ! empty( $decoded['documents'] ) ) {
+                    foreach ( $decoded['documents'] as $doc ) {
+                        // Delete the actual file from Media Library
+                        if ( ! empty( $doc['attachment_id'] ) ) {
+                            wp_delete_attachment( $doc['attachment_id'], true );
+                        }
+                    }
+                }
+
+                // 2. Delete the row from the table
+                $wpdb->delete( $this->table_name, array( 'id' => $row->id ), array( '%d' ) );
+            }
+        }
     }
 
     /* ──────────────────────────────────────── */
