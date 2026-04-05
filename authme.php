@@ -296,4 +296,49 @@ function authme_handle_universal_logout()
 }
 add_action('template_redirect', 'authme_handle_universal_logout');
 
+/* ──────────────────────────────────────────────
+ * UI & Access Restrictions
+ * ────────────────────────────────────────────── */
+
+/**
+ * Hide the WordPress Admin Bar for non-administrators on the frontend.
+ */
+add_action('after_setup_theme', 'authme_disable_admin_bar');
+function authme_disable_admin_bar() {
+    if (is_user_logged_in() && !current_user_can('administrator') && !is_admin()) {
+        show_admin_bar(false);
+    }
+}
+
+/**
+ * Redirect non-admins to the homepage after login via wp-login.php.
+ */
+add_filter('login_redirect', 'authme_restrict_login_redirect', 10, 3);
+function authme_restrict_login_redirect($redirect_to, $request, $user) {
+    if (isset($user->roles) && is_array($user->roles)) {
+        if (!in_array('administrator', $user->roles)) {
+            return home_url();
+        }
+    }
+    return $redirect_to;
+}
+
+/**
+ * Restrict wp-admin access to Administrators only.
+ * This blocks direct access to dashboard pages for non-admins.
+ */
+add_action('admin_init', 'authme_restrict_admin_access');
+function authme_restrict_admin_access() {
+    // Allow AJAX requests for plugin functionality
+    if (defined('DOING_AJAX') && DOING_AJAX) {
+        return;
+    }
+
+    // If user is logged in but not an administrator, redirect to home page
+    if (is_user_logged_in() && !current_user_can('administrator')) {
+        wp_safe_redirect(home_url());
+        exit;
+    }
+}
+
 
