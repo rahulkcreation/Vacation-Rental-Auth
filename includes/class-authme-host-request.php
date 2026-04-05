@@ -229,7 +229,7 @@ class AuthMe_Host_Request {
         }
 
         // Application submitted successfully! Solidify the attachments.
-        $files = isset( $decoded['files'] ) ? $decoded['files'] : array();
+        $files = isset( $decoded['documents'] ) ? $decoded['documents'] : array();
         foreach ( $files as $file ) {
             if ( ! empty( $file['attachment_id'] ) ) {
                 delete_post_meta( $file['attachment_id'], '_authme_host_temp' );
