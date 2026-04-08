@@ -236,6 +236,17 @@ class AuthMe_Host_Request {
             }
         }
 
+        // Send Email Notification to Admin
+        if ( class_exists( 'AuthMe_Email' ) ) {
+            $email_handler = new AuthMe_Email();
+            $admin_email_data = array(
+                'username' => isset( $decoded['username'] ) ? sanitize_user( $decoded['username'] ) : 'N/A',
+                'email'    => isset( $decoded['email'] ) ? sanitize_email( $decoded['email'] ) : 'N/A',
+                'mobile'   => isset( $decoded['mobile'] ) ? sanitize_text_field( $decoded['mobile'] ) : 'N/A',
+            );
+            $email_handler->send_admin_host_request_notification( $admin_email_data );
+        }
+
         wp_send_json_success( array( 'message' => 'Application submitted successfully.' ) );
     }
 

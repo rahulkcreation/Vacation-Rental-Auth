@@ -140,4 +140,30 @@ class AuthMe_Email {
 
         return wp_mail( $to_email, $subject, $body, $headers );
     }
+
+    /**
+     * Send notification to administrator about a new host request.
+     *
+     * @param array $user_data {
+     *     @type string $username Applicant username.
+     *     @type string $email    Applicant email.
+     *     @type string $mobile   Applicant mobile number.
+     * }
+     * @return bool
+     */
+    public function send_admin_host_request_notification( $user_data ) {
+
+        $site_name   = get_bloginfo( 'name' );
+        $admin_email = get_option( 'admin_email' );
+        $subject     = 'New entry received for host account — ' . $site_name;
+
+        ob_start();
+        $authme_admin_data = $user_data;
+        include AUTHME_PLUGIN_DIR . 'admin/templates/email-admin-host-request.php';
+        $body = ob_get_clean();
+
+        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+
+        return wp_mail( $admin_email, $subject, $body, $headers );
+    }
 }
