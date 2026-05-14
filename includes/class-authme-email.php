@@ -45,7 +45,8 @@ class AuthMe_Email {
         ob_start();
         $authme_otp_code    = $otp_code;
         $authme_otp_purpose = $purpose;
-        include AUTHME_PLUGIN_DIR . 'frontend/templates/email-otp.php';
+        $tpl = AuthMe_Assets_Loader::dir('tpl_email_otp');
+        if ($tpl && file_exists($tpl)) include $tpl;
         $body = ob_get_clean();
 
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
@@ -74,7 +75,8 @@ class AuthMe_Email {
         $authme_email_title = 'Account password changed';
         $authme_email_desc  = 'Your account password is changed successfully. Now your requested password is saved to database, you can login with your new password.';
         $authme_email_note  = 'Note: If you did not changed your password then reset your password now or contact to admin on this email - (' . $admin_email . ').';
-        include AUTHME_PLUGIN_DIR . 'frontend/templates/email-msg.php';
+        $tpl = AuthMe_Assets_Loader::dir('tpl_email_msg');
+        if ($tpl && file_exists($tpl)) include $tpl;
         $body = ob_get_clean();
 
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
@@ -105,7 +107,8 @@ class AuthMe_Email {
         $authme_host_username  = $username;
         $authme_host_password  = $password;
         $authme_email_note     = 'Note: This is system generated password. Please securely login and change this auto-generated password immediately!';
-        include AUTHME_PLUGIN_DIR . 'frontend/templates/email-details.php';
+        $tpl = AuthMe_Assets_Loader::dir('tpl_email_details');
+        if ($tpl && file_exists($tpl)) include $tpl;
         $body = ob_get_clean();
 
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
@@ -133,7 +136,8 @@ class AuthMe_Email {
         $authme_email_title = 'Application Rejected';
         $authme_email_desc  = 'We are unable to verified you email because of some document is fake or missing.';
         $authme_email_note  = 'Note: This is auto-generated mail, If you have any query Contact to admin on this email - (' . $admin_email . ').';
-        include AUTHME_PLUGIN_DIR . 'frontend/templates/email-msg.php';
+        $tpl = AuthMe_Assets_Loader::dir('tpl_email_msg');
+        if ($tpl && file_exists($tpl)) include $tpl;
         $body = ob_get_clean();
 
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
@@ -159,7 +163,8 @@ class AuthMe_Email {
 
         ob_start();
         $authme_admin_data = $user_data;
-        include AUTHME_PLUGIN_DIR . 'admin/templates/email-admin-host-request.php';
+        $tpl = AuthMe_Assets_Loader::dir('tpl_admin_email_host_request');
+        if ($tpl && file_exists($tpl)) include $tpl;
         $body = ob_get_clean();
 
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );

@@ -12,8 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-use libphonenumber\PhoneNumberUtil;
-use libphonenumber\NumberParseException;
+
 
 class AuthMe_Auth {
 
@@ -208,15 +207,10 @@ class AuthMe_Auth {
         $mobile_number = isset( $user_data['mobile_number'] ) ? sanitize_text_field( $user_data['mobile_number'] ) : '';
         $mobile_region = isset( $user_data['mobile_region'] ) ? sanitize_text_field( $user_data['mobile_region'] ) : '';
 
-        // Server-side mobile number validation using libphonenumber-for-php
-        if ( ! empty( $mobile_number ) && ! empty( $mobile_region ) ) {
-            $phoneUtil = PhoneNumberUtil::getInstance();
-            try {
-                $number = $phoneUtil->parse( $mobile_number, $mobile_region );
-                if ( ! $phoneUtil->isValidNumber( $number ) ) {
-                    wp_send_json_error( array( 'message' => 'Invalid mobile number for the selected country.' ) );
-                }
-            } catch ( NumberParseException $e ) {
+        // Server-side mobile number validation (Lightweight check)
+        if ( ! empty( $mobile_number ) ) {
+            $clean_mobile = preg_replace( '/[^0-9]/', '', $mobile_number );
+            if ( strlen( $clean_mobile ) < 7 || strlen( $clean_mobile ) > 15 ) {
                 wp_send_json_error( array( 'message' => 'Invalid mobile number format.' ) );
             }
         }
