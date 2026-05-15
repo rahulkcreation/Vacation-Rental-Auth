@@ -26,6 +26,7 @@
     backdrop.style.display = "flex";
 
     // Lock body scrolling
+    document.documentElement.classList.add("authme-html-locked");
     document.body.classList.add("authme-body-locked");
 
     // Force browser reflow before adding the visible class (for animation)
@@ -44,6 +45,7 @@
     // Wait for the transition to finish before hiding
     setTimeout(function () {
       backdrop.style.display = "none";
+      document.documentElement.classList.remove("authme-html-locked");
       document.body.classList.remove("authme-body-locked");
 
       // Reset to the login screen

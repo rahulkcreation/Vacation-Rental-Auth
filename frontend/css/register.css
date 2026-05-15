@@ -233,6 +233,24 @@
     cursor: not-allowed;
 }
 
+
+#authme-register-screen .authme-btn-cw-google {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    text-transform: capitalize !important;
+    font-weight: 400 !important;
+}
+
+#authme-register-screen #authme-cw-google-icon {
+    width: 20px;
+    height: 20px;
+}
+
+
 /* ── Responsive ──────────────────────────── */
 
 /* Tablets and smaller desktops */

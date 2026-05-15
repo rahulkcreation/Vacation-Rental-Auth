@@ -117,6 +117,7 @@
         setTimeout(function() {
             backdrop.classList.add("authme-host-visible");
         }, 10);
+        document.documentElement.classList.add("authme-html-locked");
         document.body.classList.add("authme-body-locked");
     }
 
@@ -125,6 +126,7 @@
         backdrop.classList.remove("authme-host-visible");
         setTimeout(function() {
             backdrop.style.display = "none";
+            document.documentElement.classList.remove("authme-html-locked");
             document.body.classList.remove("authme-body-locked");
             
             // Remove URL param

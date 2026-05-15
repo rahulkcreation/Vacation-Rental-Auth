@@ -88,20 +88,31 @@
 }
 
 
+/* Ensure the body is locked dusring the scrolling when popup is appear */
+html.authme-html-locked,
+body.authme-body-locked {
+    overflow: hidden !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    touch-action: none;
+}
+
+
 
 /* ============================================
  * Custom Country Dropdown
  * ============================================ */
 .authme-custom-dropdown {
     position: relative;
-    width: 100px;
+    width: 85px;
     font-family: var(--authme-font);
 }
 
 .authme-dropdown-trigger {
     width: 100%;
     height: 48px;
-    padding: 0 12px;
+    padding: 0 1rem;
     background: var(--authme-white);
     border: 1.5px solid var(--authme-border-default);
     border-radius: 12px;
@@ -110,7 +121,7 @@
     justify-content: space-between;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 15px;
+    font-size: 1.3rem;
     color: var(--authme-text);
 }
 
@@ -119,7 +130,7 @@
 }
 
 .authme-selected-flag {
-    font-size: 18px;
+    font-size: 1.3rem;
     margin-right: 4px;
 }
 
@@ -140,7 +151,9 @@
     position: absolute;
     top: calc(100% + 8px);
     left: 0;
-    width: 250px;
+    width: 100%;
+    min-width: 220px;
+    max-width: 250px;
     max-height: 250px;
     background: var(--authme-white);
     border-radius: 16px;
@@ -148,7 +161,7 @@
     border: 1px solid var(--authme-border-light);
     z-index: 1100;
     overflow: hidden;
-    display: flex ;
+    display: flex;
     flex-direction: column;
 }
 
@@ -212,7 +225,8 @@
 
 .authme-dropdown-item .item-name {
     flex: 1;
-    font-size: 1.35rem;
+    font-size: 1.3rem;
+    line-height: 1.2em;
     font-weight: 500;
     color: var(--authme-dropdown-text-main);
 }
@@ -221,13 +235,4 @@
     font-size: 1.2rem;
     color: var(--authme-dropdown-text-mute);
     font-weight: 400;
-}
-
-@media (max-width: 480px) {
-    .authme-dropdown-menu {
-        width: calc(100vw - 40px);
-        max-width: 320px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
 }

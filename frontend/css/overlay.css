@@ -8,11 +8,6 @@
  * @package AuthMe
  * ============================================ */
 
-/* ── Body lock when overlay is open ──────── */
-body.authme-body-locked {
-    overflow: hidden;
-}
-
 /* ── Backdrop ────────────────────────────── */
 .authme-overlay-backdrop {
     position: fixed;
@@ -27,7 +22,10 @@ body.authme-body-locked {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 40px 20px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -40,9 +38,10 @@ body.authme-body-locked {
 .authme-overlay-container {
     position: relative;
     width: 100%;
+    min-width: 300px;
     max-width: 420px; 
-    max-height: 650px;
-    overflow: auto;
+    margin: auto;
+    max-height: none;
     background-color: var(--authme-white);
     border-radius: 20px;
     padding: 40px;
@@ -58,18 +57,14 @@ body.authme-body-locked {
     opacity: 1;
 }
 
-/* Custom scrollbar for the overlay */
+/* Custom scrollbar for the overlay (Hidden but scrollable) */
+.authme-overlay-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+
 .authme-overlay-container::-webkit-scrollbar {
-    width: 4px;
-}
-
-.authme-overlay-container::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.authme-overlay-container::-webkit-scrollbar-thumb {
-    background: var(--authme-border-default);
-    border-radius: 4px;
+    display: none;             /* Chrome, Safari and Opera */
 }
 
 /* ── Close Button ────────────────────────── */

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * AuthMe Register Screen Template
  *
@@ -8,7 +9,7 @@
  * @package AuthMe
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
+if (! defined('ABSPATH')) {
     exit;
 }
 ?>
@@ -23,14 +24,14 @@ if ( ! defined( 'ABSPATH' ) ) {
         <!-- Username Field -->
         <div class="authme-input-group">
             <input type="text" id="authme-reg-username" class="authme-input"
-                   placeholder="Username" aria-label="Username" required>
+                placeholder="Username" aria-label="Username" required>
             <span id="authme-reg-username-msg" class="authme-field-msg"></span>
         </div>
 
         <!-- Email Field -->
         <div class="authme-input-group">
             <input type="email" id="authme-reg-email" class="authme-input"
-                   placeholder="Email Address" aria-label="Email Address" required>
+                placeholder="Email Address" aria-label="Email Address" required>
             <span id="authme-reg-email-msg" class="authme-field-msg"></span>
         </div>
 
@@ -41,7 +42,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <button type="button" class="authme-dropdown-trigger" id="authme-reg-country-trigger">
                         <span class="authme-selected-flag">🌐</span>
                         <span class="authme-selected-code">Code</span>
-                        <svg class="authme-dropdown-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                        <svg class="authme-dropdown-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 9l6 6 6-6" />
+                        </svg>
                     </button>
                     <div class="authme-dropdown-menu" id="authme-reg-country-menu" style="display:none;">
                         <div class="authme-dropdown-search">
@@ -55,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </div>
 
                 <input type="tel" id="authme-reg-mobile" class="authme-input authme-mobile-input"
-                       placeholder="Mobile Number" aria-label="Mobile Number" required>
+                    placeholder="Mobile Number" aria-label="Mobile Number" required>
             </div>
             <span id="authme-reg-mobile-msg" class="authme-field-msg"></span>
         </div>
@@ -65,10 +68,16 @@ if ( ! defined( 'ABSPATH' ) ) {
         <div class="authme-input-group">
             <div class="authme-password-wrapper">
                 <input type="password" id="authme-reg-password" class="authme-input"
-                       placeholder="Password" aria-label="Password" required>
+                    placeholder="Password" aria-label="Password" required>
                 <button type="button" class="authme-toggle-password" data-target="authme-reg-password" aria-label="Toggle password visibility">
-                    <svg class="authme-eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-                    <svg class="authme-eye-on" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <svg class="authme-eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                    <svg class="authme-eye-on" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
                 </button>
             </div>
             <!-- Password strength indicator -->
@@ -80,10 +89,16 @@ if ( ! defined( 'ABSPATH' ) ) {
         <div class="authme-input-group">
             <div class="authme-password-wrapper">
                 <input type="password" id="authme-reg-confirm-password" class="authme-input"
-                       placeholder="Confirm Password" aria-label="Confirm Password" required>
+                    placeholder="Confirm Password" aria-label="Confirm Password" required>
                 <button type="button" class="authme-toggle-password" data-target="authme-reg-confirm-password" aria-label="Toggle password visibility">
-                    <svg class="authme-eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-                    <svg class="authme-eye-on" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <svg class="authme-eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                    <svg class="authme-eye-on" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
                 </button>
             </div>
             <span id="authme-reg-confirm-password-msg" class="authme-field-msg"></span>
@@ -97,6 +112,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
         <!-- Submit Button -->
         <button type="submit" id="authme-reg-submit-btn" class="authme-btn authme-btn-primary" disabled>Send OTP</button>
+        <button type="submit" id="authme-reg-cwg-btn" class="authme-btn authme-btn-primary authme-btn-cw-google">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="authme-cw-google-icon">
+                <g fill="currentColor">
+                    <path d="M21.15 12.2175C21.15 17.5238 17.5162 21.3 12.15 21.3C7.005 21.3 2.85 17.145 2.85 12C2.85 6.855 7.005 2.7 12.15 2.7C14.655 2.7 16.7625 3.61875 18.3862 5.13375L15.855 7.5675C12.5437 4.3725 6.38625 6.7725 6.38625 12C6.38625 15.2438 8.9775 17.8725 12.15 17.8725C15.8325 17.8725 17.2125 15.2325 17.43 13.8638H12.15V10.665H21.0037C21.09 11.1413 21.15 11.5987 21.15 12.2175Z" />
+                </g>
+            </svg>
+            Continue with google </button>
 
     </form>
 
