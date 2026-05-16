@@ -26,6 +26,15 @@ class AuthMe_Admin {
         add_action( 'wp_ajax_authme_admin_get_host_requests', array( $this, 'ajax_get_host_requests' ) );
         add_action( 'wp_ajax_authme_admin_get_single_host', array( $this, 'ajax_get_single_host_request' ) );
         add_action( 'wp_ajax_authme_admin_process_host', array( $this, 'ajax_process_host_request' ) );
+
+        // All Users Admin AJAX endpoints
+        add_action( 'wp_ajax_authme_admin_get_all_users', array( $this, 'ajax_get_all_users' ) );
+        add_action( 'wp_ajax_authme_admin_get_user_details', array( $this, 'ajax_get_user_details' ) );
+        add_action( 'wp_ajax_authme_admin_update_user', array( $this, 'ajax_update_user_details' ) );
+        add_action( 'wp_ajax_authme_admin_check_username', array( $this, 'ajax_check_username_availability' ) );
+        
+        // Admin Footer Injections
+        add_action( 'admin_footer', array( $this, 'inject_admin_global_ui' ) );
     }
 
     /* ──────────────────────────────────────── */
@@ -87,6 +96,16 @@ class AuthMe_Admin {
             array( $this, 'render_host_requests' ) // Callback
         );
 
+        // Sub-menu: All Users
+        add_submenu_page(
+            'authme',                           // Parent slug
+            'All Users',                        // Page title
+            'All Users',                        // Menu title
+            'manage_options',                   // Capability
+            'authme-users',                     // Menu slug
+            array( $this, 'render_all_users' )  // Callback
+        );
+
         // Hidden Sub-menu: View Form
         add_submenu_page(
             null,                               // Parent slug null to hide it from menu
@@ -95,6 +114,16 @@ class AuthMe_Admin {
             'manage_options',                   // Capability
             'authme-view-form',                 // Menu slug
             array( $this, 'render_view_form' )  // Callback
+        );
+
+        // Hidden Sub-menu: View User
+        add_submenu_page(
+            null,                               // Parent slug null to hide it from menu
+            'View User',                        // Page title
+            '',                                 // Menu title
+            'manage_options',                   // Capability
+            'authme-view-user',                 // Menu slug
+            array( $this, 'render_view_user' )  // Callback
         );
     }
 
@@ -109,6 +138,11 @@ class AuthMe_Admin {
         // Only load on AuthMe pages
         if ( strpos( $hook, 'authme' ) === false ) {
             return;
+        }
+
+        // Enqueue media library for profile photo upload on View User page
+        if ( strpos( $hook, 'authme-view-user' ) !== false ) {
+            wp_enqueue_media();
         }
 
         // Global CSS
@@ -131,6 +165,10 @@ class AuthMe_Admin {
             $current_page = 'host-requests';
         } elseif ( strpos( $hook, 'authme-view-form' ) !== false ) {
             $current_page = 'view-form';
+        } elseif ( strpos( $hook, 'authme-users' ) !== false ) {
+            $current_page = 'all_users';
+        } elseif ( strpos( $hook, 'authme-view-user' ) !== false ) {
+            $current_page = 'view_user';
         } elseif ( strpos( $hook, 'toplevel_page_authme' ) !== false || strpos( $hook, 'authme_page_authme' ) !== false ) {
             $current_page = 'dashboard';
         }
@@ -205,6 +243,22 @@ class AuthMe_Admin {
      */
     public function render_view_form() {
         $tpl = AuthMe_Assets_Loader::dir('admin_view_form');
+        if ($tpl && file_exists($tpl)) include $tpl;
+    }
+
+    /**
+     * Render the All Users page.
+     */
+    public function render_all_users() {
+        $tpl = AuthMe_Assets_Loader::dir('admin_all_users_tpl');
+        if ($tpl && file_exists($tpl)) include $tpl;
+    }
+
+    /**
+     * Render the View User page.
+     */
+    public function render_view_user() {
+        $tpl = AuthMe_Assets_Loader::dir('admin_view_user_tpl');
         if ($tpl && file_exists($tpl)) include $tpl;
     }
 
@@ -471,6 +525,218 @@ class AuthMe_Admin {
             // Pending
             $wpdb->update( $table_name, array( 'status' => 'pending' ), array( 'id' => $id ), array( '%s' ), array( '%d' ) );
             wp_send_json_success( array( 'message' => 'Status set to Pending.' ) );
+        }
+    }
+    /* ── Users Management AJAX Endpoints ────────── */
+
+    /**
+     * Fetch list of travelers for the datatable.
+     */
+    public function ajax_get_all_users() {
+        check_ajax_referer( 'authme_admin_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized.' ) );
+        }
+
+        $search = isset( $_POST['search'] ) ? sanitize_text_field( $_POST['search'] ) : '';
+        $page   = isset( $_POST['page'] ) ? intval( $_POST['page'] ) : 1;
+        $limit  = 10;
+        $offset = ( $page - 1 ) * $limit;
+
+        // Note: The plugin uses 'traveller' (double 'l') in some places and 'traveler' in others.
+        // We'll search for both or just use the one used in registration.
+        $args = array(
+            'role'    => 'traveller',
+            'number'  => $limit,
+            'offset'  => $offset,
+            'search'  => ! empty( $search ) ? '*' . $search . '*' : '',
+            'search_columns' => array( 'user_login', 'user_email', 'display_name' ),
+            'orderby' => 'user_registered',
+            'order'   => 'DESC',
+        );
+
+        $user_query = new WP_User_Query( $args );
+        $users = $user_query->get_results();
+        $total_users = $user_query->get_total();
+
+        $formatted_data = array();
+        foreach ( $users as $user ) {
+            $formatted_data[] = array(
+                'id'       => $user->ID,
+                'username' => $user->user_login,
+                'email'    => $user->user_email,
+                'phone'    => get_user_meta( $user->ID, 'mobile_number', true ) ?: 'N/A',
+                'fullname' => $user->display_name ?: $user->user_login,
+                'date'     => wp_date( 'F j, Y', strtotime( $user->user_registered ) ),
+            );
+        }
+
+        wp_send_json_success( array(
+            'items' => $formatted_data,
+            'total' => $total_users,
+            'pages' => ceil( $total_users / $limit ),
+        ) );
+    }
+
+    /**
+     * Fetch single user details.
+     */
+    public function ajax_get_user_details() {
+        check_ajax_referer( 'authme_admin_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized.' ) );
+        }
+
+        $id = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
+        if ( ! $id ) {
+            wp_send_json_error( array( 'message' => 'Invalid User ID.' ) );
+        }
+
+        $user = get_userdata( $id );
+        if ( ! $user ) {
+            wp_send_json_error( array( 'message' => 'User not found.' ) );
+        }
+
+        $avatar_url = get_user_meta( $user->ID, 'profile_pic', true );
+        $avatar_id  = $avatar_url ? attachment_url_to_postid( $avatar_url ) : 0;
+        
+        if ( ! $avatar_url ) {
+            $avatar_url = get_avatar_url( $user->ID );
+        }
+
+        $data = array(
+            'id'         => $user->ID,
+            'username'   => $user->user_login,
+            'email'      => $user->user_email,
+            'fullname'   => $user->display_name,
+            'mobile'     => get_user_meta( $user->ID, 'mobile_number', true ) ?: '',
+            'role'       => implode( ', ', $user->roles ),
+            'avatar_url' => $avatar_url,
+            'avatar_id'  => $avatar_id,
+        );
+
+        wp_send_json_success( $data );
+    }
+
+    /**
+     * Update user details and password.
+     */
+    public function ajax_update_user_details() {
+        check_ajax_referer( 'authme_admin_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized.' ) );
+        }
+
+        $id = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
+        if ( ! $id ) {
+            wp_send_json_error( array( 'message' => 'Invalid User ID.' ) );
+        }
+
+        $email    = isset( $_POST['email'] ) ? sanitize_email( $_POST['email'] ) : '';
+        $fullname = isset( $_POST['fullname'] ) ? sanitize_text_field( $_POST['fullname'] ) : '';
+        $mobile   = isset( $_POST['mobile'] ) ? sanitize_text_field( $_POST['mobile'] ) : '';
+        $username = isset( $_POST['username'] ) ? sanitize_user( $_POST['username'] ) : '';
+        $password = isset( $_POST['password'] ) ? $_POST['password'] : '';
+        $avatar_id = isset( $_POST['avatar_id'] ) ? intval( $_POST['avatar_id'] ) : 0;
+
+        if ( ! is_email( $email ) ) {
+            wp_send_json_error( array( 'message' => 'Invalid email address.' ) );
+        }
+
+        // Check if email is already taken by another user
+        $existing_user = get_user_by( 'email', $email );
+        if ( $existing_user && $existing_user->ID !== $id ) {
+            wp_send_json_error( array( 'message' => 'This email is already in use by another account.' ) );
+        }
+
+        $userdata = array(
+            'ID'           => $id,
+            'user_email'   => $email,
+            'display_name' => $fullname,
+        );
+
+        if ( ! empty( $password ) ) {
+            $userdata['user_pass'] = $password;
+        }
+
+        $update_id = wp_update_user( $userdata );
+
+        if ( is_wp_error( $update_id ) ) {
+            wp_send_json_error( array( 'message' => $update_id->get_error_message() ) );
+        }
+
+        // Update Username directly via SQL if changed (wp_update_user doesn't allow it)
+        $current_user = get_userdata( $id );
+        if ( $username && $username !== $current_user->user_login ) {
+            // Re-check uniqueness just in case
+            $check_user = get_user_by( 'login', $username );
+            if ( $check_user && $check_user->ID !== $id ) {
+                wp_send_json_error( array( 'message' => 'This username is already taken.' ) );
+            }
+
+            global $wpdb;
+            $wpdb->update(
+                $wpdb->users,
+                array( 'user_login' => $username, 'user_nicename' => sanitize_title( $username ) ),
+                array( 'ID' => $id )
+            );
+            clean_user_cache( $id );
+        }
+
+        update_user_meta( $id, 'mobile_number', $mobile );
+        
+        if ( $avatar_id ) {
+            $avatar_url = wp_get_attachment_url( $avatar_id );
+            if ( $avatar_url ) {
+                update_user_meta( $id, 'profile_pic', $avatar_url );
+            }
+        }
+
+        wp_send_json_success( array( 'message' => 'User updated successfully.' ) );
+    }
+
+    /**
+     * Check if username is available.
+     */
+    public function ajax_check_username_availability() {
+        check_ajax_referer( 'authme_admin_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized.' ) );
+        }
+
+        $username = isset( $_POST['username'] ) ? sanitize_user( $_POST['username'] ) : '';
+        $user_id  = isset( $_POST['user_id'] ) ? intval( $_POST['user_id'] ) : 0;
+
+        if ( empty( $username ) ) {
+            wp_send_json_error( array( 'message' => 'Username cannot be empty.' ) );
+        }
+
+        $user = get_user_by( 'login', $username );
+
+        if ( $user && $user->ID !== $user_id ) {
+            wp_send_json_error( array( 'message' => 'Username is already taken.', 'available' => false ) );
+        }
+
+        wp_send_json_success( array( 'message' => 'Username is available.', 'available' => true ) );
+    }
+
+    /**
+     * Inject global UI components (Toaster, Confirmation) into the admin footer.
+     */
+    public function inject_admin_global_ui() {
+        $screen = get_current_screen();
+        if ( ! $screen || strpos( $screen->id, 'authme' ) === false ) {
+            return;
+        }
+
+        $toaster_tpl = AuthMe_Assets_Loader::dir('tpl_toaster');
+        $confirm_tpl = AuthMe_Assets_Loader::dir('tpl_confirm');
+
+        if ( $toaster_tpl && file_exists( $toaster_tpl ) ) {
+            include $toaster_tpl;
+        }
+        if ( $confirm_tpl && file_exists( $confirm_tpl ) ) {
+            include $confirm_tpl;
         }
     }
 }

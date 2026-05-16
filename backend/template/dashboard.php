@@ -139,6 +139,19 @@ $host_page_url     = admin_url('admin.php?page=authme-host-requests');
                         </div>
                     </div>
 
+                    <!-- Google OAuth 2.0 Integration ──────────────── -->
+                    <div class="am-card am-card-section">
+                        <h2 class="am-subtitle">🌐 Google OAuth 2.0 Integration</h2>
+                        <div class="am-method-item">
+                            <h3 class="am-heading">One-Tap Authentication</h3>
+                            <p class="am-text">AuthMe now supports "Continue with Google" out of the box. Users can login or register instantly without manual OTP verification.</p>
+                            <div class="am-security-badges" style="margin-top:10px;">
+                                <div class="am-badge am-badge-success">Google SDK V3</div>
+                                <div class="am-badge am-badge-otp">Auto-Login</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Universal Logout & Important Notes ──── -->
                     <div class="am-card">
                         <h2 class="am-subtitle">🔓 Universal Logout</h2>
@@ -167,6 +180,11 @@ $host_page_url     = admin_url('admin.php?page=authme-host-requests');
                     <div class="am-card am-card-section">
                         <h3 class="am-heading">📌 Quick Links</h3>
                         <div class="am-quick-link">
+                            <span class="am-icon">👥</span>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=authme-users')); ?>" class="am-link-accent">Travelers Management</a>
+                            <span class="am-quick-link-arrow">→</span>
+                        </div>
+                        <div class="am-quick-link">
                             <span class="am-icon">🗄️</span>
                             <a href="<?php echo esc_url($db_page_url); ?>" class="am-link-accent">Database Management</a>
                             <span class="am-quick-link-arrow">→</span>
@@ -181,20 +199,16 @@ $host_page_url     = admin_url('admin.php?page=authme-host-requests');
                             <span class="am-text-secondary">Plugin Settings</span>
                             <span class="am-quick-link-arrow">/wp-admin</span>
                         </div>
-                        <div class="am-quick-link">
-                            <span class="am-icon">🔐</span>
-                            <span class="am-text-secondary">Security Audit (OTP logs)</span>
-                        </div>
                     </div>
 
                     <!-- Security Status Card ────────────────── -->
                     <div class="am-card">
-                        <h3 class="am-heading">🛡️ Security Status</h3>
+                        <h3 class="am-heading">🛡️ Security & Features</h3>
                         <div class="am-security-badges">
                             <div class="am-badge am-badge-otp">OTP Two-Factor</div>
-                            <div class="am-badge am-badge-session">Session Encryption</div>
+                            <div class="am-badge am-badge-session">Media Avatars</div>
                         </div>
-                        <p class="am-text">AuthMe ensures that every frontend authentication flow is protected by OTP verification and secure tokens.</p>
+                        <p class="am-text">AuthMe now includes real-time username validation, SQL-based login updates, and full WordPress Media Library integration for profile photos.</p>
                         <hr class="am-divider">
                         <div class="am-flex-between">
                             <span class="am-text-medium">Plugin Version:</span>

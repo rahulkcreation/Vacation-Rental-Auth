@@ -37,6 +37,8 @@
     --authme-border-default: #e2e8f0;
     --authme-grey-light-text: #5a6e7c;
     --authme-overlay-bg: rgba(0, 0, 0, 0.55);
+    --authme-primary-shadow: #F15E744D;
+    --authme-white-alpha: #ffffff4d;
 
     /* Light BGS */
     --authme-light-yellow-bg: #fff2dc;
@@ -56,11 +58,16 @@
  * ============================================ */
 
 /* Remove default browser/WordPress outline and focus shadow centrally */
-.authme-global-plugin-wrapper *:focus,
-.authme-global-plugin-wrapper *:focus-visible,
-.authme-global-plugin-wrapper *:active {
+.authme-global-plugin-wrapper :is(
+    input[type="checkbox"], input[type="color"], input[type="date"], 
+    input[type="datetime-local"], input[type="datetime"], input[type="email"], 
+    input[type="month"], input[type="number"], input[type="password"], 
+    input[type="radio"], input[type="search"], input[type="tel"], 
+    input[type="text"], input[type="time"], input[type="url"], 
+    input[type="week"], select, textarea, a
+):is(:hover, :focus, :focus-visible, :active) {
     outline: none !important;
-    box-shadow: none !important;
+    box-shadow: unset !important;
 }
 
 /* Reset WordPress default paragraph margin and set base typography color */
@@ -80,11 +87,9 @@
 }
 
 /* Ensure WordPress admin notices don't break our layout */
-.authme-admin-notice-placeholder+.notice,
-.wrap h2+.notice {
+.authme-admin-notice-placeholder + .notice{
     margin: 5px 0 15px 0 !important;
     border-radius: 8px;
-    box-shadow: var(--authme-card-shadow);
 }
 
 

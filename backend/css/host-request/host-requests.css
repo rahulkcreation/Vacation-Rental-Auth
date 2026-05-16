@@ -540,9 +540,9 @@
     padding: 9px 18px;
     font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--authme-white);
+    color: var(--authme-white) !important;
     background-color: var(--authme-primary);
-    border: none;
+    border: none !important;
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;

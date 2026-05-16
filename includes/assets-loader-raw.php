@@ -1,4 +1,5 @@
 <?php
+
 /**
  * AuthMe — Centralized Assets Loader
  *
@@ -22,11 +23,12 @@
  * @package AuthMe
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
-class AuthMe_Assets_Loader {
+class AuthMe_Assets_Loader
+{
 
     /* ================================================
      * 📁 PATH REGISTRY
@@ -44,7 +46,8 @@ class AuthMe_Assets_Loader {
      *
      * @return array Associative array of all file paths.
      */
-    public static function get_paths() {
+    public static function get_paths()
+    {
 
         $base_dir = AUTHME_PLUGIN_DIR;
         $base_url = AUTHME_PLUGIN_URL;
@@ -200,12 +203,12 @@ class AuthMe_Assets_Loader {
                 'url' => $base_url . 'backend/js/dashboard.js',
             ),
             'admin_host_requests_css' => array(
-                'dir' => $base_dir . 'backend/css/host-requests.css',
-                'url' => $base_url . 'backend/css/host-requests.css',
+                'dir' => $base_dir . 'backend/css/host-request/host-requests.css',
+                'url' => $base_url . 'backend/css/host-request/host-requests.css',
             ),
             'admin_host_requests_js'  => array(
-                'dir' => $base_dir . 'backend/js/host-requests.js',
-                'url' => $base_url . 'backend/js/host-requests.js',
+                'dir' => $base_dir . 'backend/js/host-request/host-requests.js',
+                'url' => $base_url . 'backend/js/host-request/host-requests.js',
             ),
             'admin_database_css' => array(
                 'dir' => $base_dir . 'backend/css/database.css',
@@ -216,12 +219,12 @@ class AuthMe_Assets_Loader {
                 'url' => $base_url . 'backend/js/database.js',
             ),
             'admin_view_form_css' => array(
-                'dir' => $base_dir . 'backend/css/view-form.css',
-                'url' => $base_url . 'backend/css/view-form.css',
+                'dir' => $base_dir . 'backend/css/host-request/view-form.css',
+                'url' => $base_url . 'backend/css/host-request/view-form.css',
             ),
             'admin_view_form_js' => array(
-                'dir' => $base_dir . 'backend/js/view-form.js',
-                'url' => $base_url . 'backend/js/view-form.js',
+                'dir' => $base_dir . 'backend/js/host-request/view-form.js',
+                'url' => $base_url . 'backend/js/host-request/view-form.js',
             ),
 
             /* ── Admin Templates ────────────────── */
@@ -232,10 +235,32 @@ class AuthMe_Assets_Loader {
                 'dir' => $base_dir . 'backend/template/database.php',
             ),
             'admin_host_requests' => array(
-                'dir' => $base_dir . 'backend/template/host-requests.php',
+                'dir' => $base_dir . 'backend/template/host-request/host-requests.php',
             ),
             'admin_view_form' => array(
-                'dir' => $base_dir . 'backend/template/view-form.php',
+                'dir' => $base_dir . 'backend/template/host-request/view-form.php',
+            ),
+            'admin_all_users_tpl' => array(
+                'dir' => $base_dir . 'backend/template/users/all-users.php',
+            ),
+            'admin_view_user_tpl' => array(
+                'dir' => $base_dir . 'backend/template/users/view-user.php',
+            ),
+            'admin_all_users_css' => array(
+                'dir' => $base_dir . 'backend/css/users/all-users.css',
+                'url' => $base_url . 'backend/css/users/all-users.css',
+            ),
+            'admin_all_users_js' => array(
+                'dir' => $base_dir . 'backend/js/users/all-users.js',
+                'url' => $base_url . 'backend/js/users/all-users.js',
+            ),
+            'admin_view_user_css' => array(
+                'dir' => $base_dir . 'backend/css/users/view-user.css',
+                'url' => $base_url . 'backend/css/users/view-user.css',
+            ),
+            'admin_view_user_js' => array(
+                'dir' => $base_dir . 'backend/js/users/view-user.js',
+                'url' => $base_url . 'backend/js/users/view-user.js',
             ),
             'tpl_confirm' => array(
                 'dir' => $base_dir . 'global-assets/template/confirmation.php',
@@ -277,9 +302,10 @@ class AuthMe_Assets_Loader {
      * @param string $key File key from the path registry.
      * @return string|null Absolute file path, or null if not found.
      */
-    public static function dir( $key ) {
+    public static function dir($key)
+    {
         $paths = self::get_paths();
-        return isset( $paths[ $key ]['dir'] ) ? $paths[ $key ]['dir'] : null;
+        return isset($paths[$key]['dir']) ? $paths[$key]['dir'] : null;
     }
 
     /**
@@ -288,9 +314,10 @@ class AuthMe_Assets_Loader {
      * @param string $key File key from the path registry.
      * @return string|null Public URL, or null if not found.
      */
-    public static function url( $key ) {
+    public static function url($key)
+    {
         $paths = self::get_paths();
-        return isset( $paths[ $key ]['url'] ) ? $paths[ $key ]['url'] : null;
+        return isset($paths[$key]['url']) ? $paths[$key]['url'] : null;
     }
 
     /**
@@ -299,9 +326,10 @@ class AuthMe_Assets_Loader {
      * @param string $key File key from the path registry.
      * @return int|false File modification time, or false on failure.
      */
-    public static function version( $key ) {
-        $dir = self::dir( $key );
-        return ( $dir && file_exists( $dir ) ) ? filemtime( $dir ) : AUTHME_VERSION;
+    public static function version($key)
+    {
+        $dir = self::dir($key);
+        return ($dir && file_exists($dir)) ? filemtime($dir) : AUTHME_VERSION;
     }
 
     /* ================================================
@@ -312,22 +340,23 @@ class AuthMe_Assets_Loader {
      * Enqueue all frontend CSS and JS files.
      * Hooked to 'wp_enqueue_scripts'.
      */
-    public static function enqueue_frontend() {
+    public static function enqueue_frontend()
+    {
 
         /* ── CSS Files ───────────────────── */
-        $css_files = array( 'global', 'overlay', 'login', 'register', 'otp', 'toaster', 'confirm', 'forgot_password', 'new_password', 'host_request', 'google_auth' );
+        $css_files = array('global', 'overlay', 'login', 'register', 'otp', 'toaster', 'confirm', 'forgot_password', 'new_password', 'host_request', 'google_auth');
 
-        foreach ( $css_files as $name ) {
+        foreach ($css_files as $name) {
             $key = 'css_' . $name;
-            $dir = self::dir( $key );
-            $url = self::url( $key );
+            $dir = self::dir($key);
+            $url = self::url($key);
 
-            if ( $dir && $url && file_exists( $dir ) ) {
+            if ($dir && $url && file_exists($dir)) {
                 wp_enqueue_style(
                     'authme-' . $name,
                     $url,
                     array(),
-                    self::version( $key )
+                    self::version($key)
                 );
             }
         }
@@ -335,39 +364,39 @@ class AuthMe_Assets_Loader {
         /* ── JS Files with Dependencies ──── */
         $js_files = array(
             'global'   => array(),
-            'toaster'  => array( 'authme-global' ),
-            'confirm'  => array( 'authme-global' ),
-            'overlay'  => array( 'authme-global' ),
-            'login'    => array( 'authme-global', 'authme-toaster', 'authme-overlay' ),
-            'phone_core' => array( 'authme-global' ),
-            'register' => array( 'authme-global', 'authme-toaster', 'authme-overlay', 'authme-phone_core' ),
-            'otp'             => array( 'authme-global', 'authme-toaster', 'authme-overlay' ),
-            'forgot_password' => array( 'authme-global', 'authme-toaster', 'authme-overlay' ),
-            'new_password'    => array( 'authme-global', 'authme-toaster', 'authme-overlay' ),
-            'host_request'    => array( 'authme-global', 'authme-toaster', 'authme-confirm', 'authme-phone_core' ),
-            'google_auth'     => array( 'authme-global', 'authme-toaster' ),
+            'toaster'  => array('authme-global'),
+            'confirm'  => array('authme-global'),
+            'overlay'  => array('authme-global'),
+            'login'    => array('authme-global', 'authme-toaster', 'authme-overlay'),
+            'phone_core' => array('authme-global'),
+            'register' => array('authme-global', 'authme-toaster', 'authme-overlay', 'authme-phone_core'),
+            'otp'             => array('authme-global', 'authme-toaster', 'authme-overlay'),
+            'forgot_password' => array('authme-global', 'authme-toaster', 'authme-overlay'),
+            'new_password'    => array('authme-global', 'authme-toaster', 'authme-overlay'),
+            'host_request'    => array('authme-global', 'authme-toaster', 'authme-confirm', 'authme-phone_core'),
+            'google_auth'     => array('authme-global', 'authme-toaster'),
         );
 
-        foreach ( $js_files as $name => $deps ) {
+        foreach ($js_files as $name => $deps) {
             $key = 'js_' . $name;
-            $dir = self::dir( $key );
-            $url = self::url( $key );
+            $dir = self::dir($key);
+            $url = self::url($key);
 
-            if ( $dir && $url && file_exists( $dir ) ) {
+            if ($dir && $url && file_exists($dir)) {
                 wp_enqueue_script(
                     'authme-' . $name,
                     $url,
                     $deps,
-                    self::version( $key ),
+                    self::version($key),
                     true // Load in footer
                 );
             }
         }
 
         /* ── Localize AJAX data ──────────── */
-        wp_localize_script( 'authme-global', 'authme_ajax', array(
-            'ajax_url' => admin_url( 'admin-ajax.php' ),
-            'nonce'    => wp_create_nonce( 'authme_nonce' ),
-        ) );
+        wp_localize_script('authme-global', 'authme_ajax', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce'    => wp_create_nonce('authme_nonce'),
+        ));
     }
 }
