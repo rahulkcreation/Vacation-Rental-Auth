@@ -92,6 +92,5 @@
             });
         });
 
-        console.log('AuthMe Dashboard initialized — copy buttons active.');
     });
 })();

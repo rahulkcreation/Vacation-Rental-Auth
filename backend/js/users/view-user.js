@@ -204,7 +204,6 @@
      * Handle user update submission.
      */
     function handleUpdate() {
-        console.log('Update button clicked');
 
         if (!isUsernameAvailable) {
             showToast('error', 'Please choose a unique username');
@@ -242,7 +241,6 @@
         formData.append('password', password);
         formData.append('avatar_id', avatarId);
 
-        console.log('Sending update request for user ID:', userId);
 
         fetch(authme_admin.ajax_url, {
             method: 'POST',
@@ -250,7 +248,6 @@
         })
         .then(res => res.json())
         .then(result => {
-            console.log('Update result:', result);
             if (result.success) {
                 showToast('success', result.data.message || 'Profile updated successfully');
                 originalUsername = username;
@@ -278,7 +275,6 @@
         const saveBtn = document.getElementById('authme-user-v-save-btn');
         if (!saveBtn) return;
 
-        console.log('View User script loaded');
 
         fetchUserDetails();
 

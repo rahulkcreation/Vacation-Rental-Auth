@@ -44,15 +44,27 @@ class AuthMe_Admin {
      * Register admin menu and sub-menu pages.
      */
     public function register_admin_menus() {
+        global $wpdb;
+        $host_table = $wpdb->prefix . 'host_request';
+        $pending_count = 0;
+        if ( $wpdb->get_var("SHOW TABLES LIKE '{$host_table}'") === $host_table ) {
+            $pending_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$host_table} WHERE status = 'pending'" );
+        }
+
+        $bubble = '';
+        if ( $pending_count > 0 ) {
+            $bubble = ' <span class="update-plugins count-' . esc_attr( $pending_count ) . '"><span class="plugin-count">' . esc_html( $pending_count ) . '</span></span>';
+        }
+
         // Main menu: AuthMe
         add_menu_page(
             'AuthMe',                          // Page title
-            'AuthMe',                          // Menu title
+            'AuthMe' . $bubble,                // Menu title
             'manage_options',                   // Capability
             'authme',                           // Menu slug
             array( $this, 'render_dashboard' ), // Callback
             'dashicons-lock',                   // Icon
-            80                                  // Position
+            26                                  // Position
         );
 
         // Sub-menu: Dashboard (overrides the auto-generated first submenu "AuthMe")
@@ -76,22 +88,10 @@ class AuthMe_Admin {
         );
 
         // Sub-menu: Host Requests
-        global $wpdb;
-        $host_table = $wpdb->prefix . 'host_request';
-        $pending_count = 0;
-        if ( $wpdb->get_var("SHOW TABLES LIKE '{$host_table}'") === $host_table ) {
-            $pending_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$host_table} WHERE status = 'pending'" );
-        }
-        
-        $host_menu_title = 'Host Requests';
-        if ( $pending_count > 0 ) {
-            $host_menu_title .= ' <span class="update-plugins count-' . esc_attr( $pending_count ) . '"><span class="plugin-count">' . esc_html( $pending_count ) . '</span></span>';
-        }
-
         add_submenu_page(
             'authme',                           // Parent slug
             'Host Requests',                    // Page title
-            $host_menu_title,                   // Menu title
+            'Host Requests' . $bubble,          // Menu title
             'manage_options',                   // Capability
             'authme-host-requests',             // Menu slug
             array( $this, 'render_host_requests' ) // Callback
