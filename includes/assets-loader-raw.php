@@ -8,17 +8,17 @@
  * Every other file references paths from here.
  *
  * Directory Structure (User Arranged):
- *   frontend/css/        — Frontend CSS files
- *   frontend/js/         — Frontend JS files
- *   frontend/template/   — Frontend PHP templates
- *   backend/css/         — Admin CSS files
- *   backend/js/          — Admin JS files
- *   backend/template/    — Admin PHP templates
- *   global-assets/css/   — Global CSS (variables, toaster)
- *   global-assets/js/    — Global JS (toaster, confirm)
- *   global-assets/template/ — Global templates
- *   includes/            — PHP class files
- *   mails/               — Email templates
+ *   frontend/css/            — Frontend CSS files
+ *   frontend/js/             — Frontend JS files
+ *   frontend/template/       — Frontend PHP templates
+ *   backend/css/             — Admin CSS files
+ *   backend/js/              — Admin JS files
+ *   backend/template/        — Admin PHP templates
+ *   components/global/       — Global CSS and JS (variables, phone core)
+ *   components/toaster/      — Toast notifications component
+ *   components/confirmation/ — Confirmation modal component
+ *   includes/                — PHP class files
+ *   mails/                   — Email templates
  *
  * @package AuthMe
  */
@@ -56,12 +56,12 @@ class AuthMe_Assets_Loader
 
             /* ── Global Assets ──────────────────── */
             'css_global'    => array(
-                'dir' => $base_dir . 'global-assets/css/global.css',
-                'url' => $base_url . 'global-assets/css/global.css',
+                'dir' => $base_dir . 'components/global/global.css',
+                'url' => $base_url . 'components/global/global.css',
             ),
             'js_global'     => array(
-                'dir' => $base_dir . 'global-assets/js/global.js',
-                'url' => $base_url . 'global-assets/js/global.js',
+                'dir' => $base_dir . 'components/global/global.js',
+                'url' => $base_url . 'components/global/global.js',
             ),
 
             /* ── Frontend Assets (CSS) ──────────── */
@@ -98,18 +98,18 @@ class AuthMe_Assets_Loader
                 'url' => $base_url . 'frontend/css/otp.css',
             ),
             'css_toaster'   => array(
-                'dir' => $base_dir . 'global-assets/css/toaster.css',
-                'url' => $base_url . 'global-assets/css/toaster.css',
+                'dir' => $base_dir . 'components/toaster/toaster.css',
+                'url' => $base_url . 'components/toaster/toaster.css',
             ),
             'css_confirm'   => array(
-                'dir' => $base_dir . 'global-assets/css/confirmation.css',
-                'url' => $base_url . 'global-assets/css/confirmation.css',
+                'dir' => $base_dir . 'components/confirmation/confirmation.css',
+                'url' => $base_url . 'components/confirmation/confirmation.css',
             ),
 
             /* ── Frontend Assets (JS) ───────────── */
             'js_toaster'    => array(
-                'dir' => $base_dir . 'global-assets/js/toaster.js',
-                'url' => $base_url . 'global-assets/js/toaster.js',
+                'dir' => $base_dir . 'components/toaster/toaster.js',
+                'url' => $base_url . 'components/toaster/toaster.js',
             ),
             'js_overlay'    => array(
                 'dir' => $base_dir . 'frontend/js/overlay.js',
@@ -120,8 +120,8 @@ class AuthMe_Assets_Loader
                 'url' => $base_url . 'frontend/js/login.js',
             ),
             'js_phone_core' => array(
-                'dir' => $base_dir . 'global-assets/js/am-phone-core.js',
-                'url' => $base_url . 'global-assets/js/am-phone-core.js',
+                'dir' => $base_dir . 'components/global/am-phone-core.js',
+                'url' => $base_url . 'components/global/am-phone-core.js',
             ),
             'js_register'   => array(
                 'dir' => $base_dir . 'frontend/js/register.js',
@@ -148,8 +148,8 @@ class AuthMe_Assets_Loader
                 'url' => $base_url . 'frontend/js/otp.js',
             ),
             'js_confirm'    => array(
-                'dir' => $base_dir . 'global-assets/js/confirmation.js',
-                'url' => $base_url . 'global-assets/js/confirmation.js',
+                'dir' => $base_dir . 'components/confirmation/confirmation.js',
+                'url' => $base_url . 'components/confirmation/confirmation.js',
             ),
 
             /* ── Frontend Templates ─────────────── */
@@ -169,7 +169,7 @@ class AuthMe_Assets_Loader
                 'dir' => $base_dir . 'components/google-auth/google-auth.php',
             ),
             'tpl_toaster'   => array(
-                'dir' => $base_dir . 'global-assets/template/toaster.php',
+                'dir' => $base_dir . 'components/toaster/toaster.php',
             ),
             'tpl_forgot_password' => array(
                 'dir' => $base_dir . 'frontend/template/forgot-password.php',
@@ -181,7 +181,7 @@ class AuthMe_Assets_Loader
                 'dir' => $base_dir . 'frontend/template/host-request.php',
             ),
             'tpl_confirm' => array(
-                'dir' => $base_dir . 'global-assets/template/confirmation.php',
+                'dir' => $base_dir . 'components/confirmation/confirmation.php',
             ),
 
             /* ── Mails ─────────────────────────── */
@@ -191,8 +191,8 @@ class AuthMe_Assets_Loader
 
             /* ── Admin Assets ───────────────────── */
             'admin_global_css' => array(
-                'dir' => $base_dir . 'global-assets/css/global.css',
-                'url' => $base_url . 'global-assets/css/global.css',
+                'dir' => $base_dir . 'components/global/global.css',
+                'url' => $base_url . 'components/global/global.css',
             ),
             'admin_dashboard_css' => array(
                 'dir' => $base_dir . 'backend/css/dashboard.css',
@@ -263,7 +263,7 @@ class AuthMe_Assets_Loader
                 'url' => $base_url . 'backend/js/users/view-user.js',
             ),
             'tpl_confirm' => array(
-                'dir' => $base_dir . 'global-assets/template/confirmation.php',
+                'dir' => $base_dir . 'components/confirmation/confirmation.php',
             ),
 
 
@@ -287,7 +287,7 @@ class AuthMe_Assets_Loader
                 'dir' => $base_dir . 'mails/mail-controller.php',
             ),
             'inc_assets'    => array(
-                'dir' => $base_dir . 'includes/assets-loader.php',
+                'dir' => $base_dir . 'includes/assets-loader-raw.php',
             ),
         );
     }

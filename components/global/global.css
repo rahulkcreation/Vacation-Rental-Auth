@@ -73,8 +73,8 @@
 /* Reset WordPress default paragraph margin and set base typography color */
 .authme-global-plugin-wrapper {
     box-sizing: border-box !important;
-    color: var(--leb-text-color);
-    font-family: var(--leb-font-main);
+    color: var(--authme-text);
+    font-family: var(--authme-font);
     overflow-x: clip;
 }
 
